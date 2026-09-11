@@ -1,0 +1,153 @@
+/* Theme tokens and global defaults. Layout and components live in separate files. */
+
+:root {
+  color-scheme: light;
+  --primary: #a43c12;
+  --primary-action: #a43c12;
+  --primary-dark: #822800;
+  --primary-container: #ff7f50;
+  --primary-soft: #ffdbcf;
+  --on-primary-container: #6c2000;
+  --secondary: #016b54;
+  --secondary-action: #016b54;
+  --secondary-container: #9bf0d2;
+  --on-secondary-container: #0c7058;
+  --tertiary: #075fab;
+  --info-container: #d4e3ff;
+  --info-container-hover: #b9d4ff;
+  --on-info-container: #003a6e;
+  --on-info-strong: #004884;
+  --background: #faf9f7;
+  --surface: #ffffff;
+  --surface-low: #f4f3f1;
+  --surface-mid: #efeeec;
+  --surface-high: #e9e8e6;
+  --surface-highest: #e3e2e0;
+  --glass-surface: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --topbar: rgba(250, 249, 247, 0.95);
+  --text: #1a1c1b;
+  --muted: #57423b;
+  --outline: #dec0b6;
+  --soft-border: rgba(222, 192, 182, 0.45);
+  --placeholder: #806d67;
+  --error: #ba1a1a;
+  --error-container: #ffdad6;
+  --on-error-container: #93000a;
+  --on-error-action: #ffffff;
+  --success-surface: #eff9f5;
+  --skipped-container: #eee5e2;
+  --on-skipped-container: #7a5e56;
+  --warning-container: #fff5e8;
+  --on-warning-container: #725223;
+  --focus-ring: rgba(164, 60, 18, 0.28);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --primary: #ff4e45;
+  --primary-action: #cc0000;
+  --primary-dark: #ff8a84;
+  --primary-container: #3d1818;
+  --primary-soft: #291414;
+  --on-primary-container: #ffb9b5;
+  --secondary: #4fc79f;
+  --secondary-action: #08765e;
+  --secondary-container: #15372f;
+  --on-secondary-container: #9fe7d1;
+  --tertiary: #3ea6ff;
+  --info-container: #1b3144;
+  --info-container-hover: #254967;
+  --on-info-container: #8ecfff;
+  --on-info-strong: #8ecfff;
+  --background: #0f0f0f;
+  --surface: #212121;
+  --surface-low: #181818;
+  --surface-mid: #272727;
+  --surface-high: #303030;
+  --surface-highest: #3f3f3f;
+  --glass-surface: rgba(33, 33, 33, 0.96);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --topbar: rgba(15, 15, 15, 0.96);
+  --text: #f1f1f1;
+  --muted: #aaaaaa;
+  --outline: #3f3f3f;
+  --soft-border: rgba(255, 255, 255, 0.1);
+  --placeholder: #909090;
+  --error: #ff716b;
+  --error-container: #401a1a;
+  --on-error-container: #ffc7c4;
+  --on-error-action: #2b0b0b;
+  --success-surface: #14352c;
+  --skipped-container: #303030;
+  --on-skipped-container: #d0d0d0;
+  --warning-container: #352910;
+  --on-warning-container: #f8c574;
+  --focus-ring: rgba(62, 166, 255, 0.65);
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  min-width: 320px;
+  background: var(--background);
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--text);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+select {
+  cursor: pointer;
+}
+button {
+  color: inherit;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+.material-symbols-outlined {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Material Symbols Outlined';
+  font-size: 22px;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+.material-symbols-outlined.icon-filled {
+  font-variation-settings: 'FILL' 1;
+}

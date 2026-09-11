@@ -8,13 +8,13 @@
 
 ## Validação
 
-No diretório `app/`:
+Na raiz do repositório:
 
-- [ ] Executei `npm run typecheck`
-- [ ] Executei `npm run lint`
+- [ ] Executei `npm run format:check`
 - [ ] Executei `npm test`
-- [ ] Executei `npm run build:demo` quando a interface ou a demonstração mudou
-- [ ] Executei `npm run build:mobile` quando a interface compartilhada mudou
+- [ ] Executei `npm run test:browser` quando a interface mudou
+- [ ] Executei `npm run build`
+- [ ] Atualizei os guias em `docs/`
 - [ ] Validei o APK quando a integração Android mudou
 - [ ] Não incluí dados reais, segredos, bancos ou artefatos gerados
 - [ ] Mantive a demo isolada, sem API real, D1, dados reais, Sites ou `project_id`

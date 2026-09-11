@@ -1,0 +1,390 @@
+/* Layout for the vanilla HTML interface. Shared colors remain in base.css. */
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+:focus-visible {
+  outline: 3px solid var(--tertiary);
+  outline-offset: 3px;
+}
+.help-app {
+  min-height: 100vh;
+}
+.desktop-navigation a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.desktop-navigation a.active {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+.sidebar-footer-actions small {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.page-heading h1 {
+  margin: 8px 0;
+  font-size: 34px;
+  letter-spacing: -1.2px;
+}
+.page-heading p,
+.profile-heading p {
+  color: var(--muted);
+}
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--primary);
+}
+.family-bento-grid,
+.medication-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.family-profile-card,
+.medication-glass-card {
+  padding: 24px;
+  border: 1px solid var(--soft-border);
+  border-radius: 24px;
+  background: var(--surface);
+  min-width: 0;
+}
+.family-profile-card h2,
+.medication-glass-card h2 {
+  font-size: 22px;
+  margin: 10px 0;
+}
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.profile-heading > div {
+  flex: 1;
+}
+.profile-actions,
+.card-footer,
+.catalog-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.medical-notes {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  min-height: 40px;
+}
+.family-medicine-button {
+  margin-top: 18px;
+  width: 100%;
+}
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.filter-bar select {
+  max-width: 100%;
+}
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.document-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.document-card h2 {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.document-card-actions {
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  gap: 8px;
+}
+.document-icon {
+  color: var(--primary);
+}
+.app-disclaimer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 48px;
+  padding: 24px 0;
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+}
+.mobile-topbar,
+.mobile-bottom-nav {
+  display: none;
+}
+.table-scroll {
+  overflow: auto;
+  border: 1px solid var(--soft-border);
+  border-radius: 20px;
+  background: var(--surface);
+}
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.history-table th,
+.history-table td {
+  padding: 18px;
+  text-align: left;
+  border-bottom: 1px solid var(--soft-border);
+}
+.history-table small {
+  display: block;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.history-pagination {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.history-pagination > div {
+  display: flex;
+  gap: 10px;
+}
+.loading,
+.load-error {
+  max-width: 640px;
+  margin: 100px auto;
+  padding: 24px;
+}
+@media (max-width: 1000px) {
+  .document-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .desktop-sidebar {
+    display: none;
+  }
+  .app-canvas {
+    margin-left: 0;
+  }
+  .content-container {
+    padding: 24px 18px 100px;
+  }
+  .mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    background: var(--topbar);
+    z-index: 30;
+  }
+  .mobile-topbar .theme-toggle span:not(.material-symbols-outlined) {
+    display: none;
+  }
+  .mobile-brand {
+    font-weight: 750;
+    color: var(--primary);
+    font-size: 24px;
+  }
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    inset: auto 0 0;
+    padding: 10px 6px max(10px, env(safe-area-inset-bottom));
+    background: var(--surface);
+    border-top: 1px solid var(--outline);
+    z-index: 40;
+    justify-content: space-around;
+  }
+  .mobile-bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .mobile-bottom-nav a.active {
+    color: var(--primary);
+    font-weight: 700;
+  }
+  .page-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .page-heading h1 {
+    font-size: 28px;
+  }
+  .family-bento-grid,
+  .medication-bento-grid,
+  .document-grid {
+    grid-template-columns: 1fr;
+  }
+  .filter-bar > * {
+    flex: 1;
+    min-width: 140px;
+  }
+  .history-pagination {
+    flex-direction: column;
+  }
+  .table-scroll {
+    font-size: 13px;
+  }
+  .app-disclaimer {
+    align-items: flex-start;
+  }
+}
+
+/* Shared application shell */
+.desktop-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  display: flex;
+  width: 256px;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-right: 1px solid var(--outline);
+  background: var(--surface-low);
+}
+.brand-block {
+  display: grid;
+  gap: 3px;
+  margin-bottom: 34px;
+}
+.brand-block strong {
+  color: var(--primary);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: -1.2px;
+}
+.brand-block span {
+  color: var(--muted);
+  font-size: 15px;
+}
+.desktop-navigation {
+  display: grid;
+  gap: 8px;
+}
+.sidebar-footer-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: auto;
+}
+.app-canvas {
+  min-height: 100vh;
+  margin-left: 256px;
+}
+.content-container {
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 32px 28px 52px;
+}
+.greeting-section {
+  margin-bottom: 30px;
+}
+.greeting-section h1 {
+  font-size: 30px;
+  margin: 0 0 8px;
+}
+.greeting-section p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.section-heading h2 {
+  font-size: 20px;
+}
+.medication-glass-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.card-footer {
+  margin-top: auto;
+}
+.document-card {
+  border: 1px solid var(--soft-border);
+  border-radius: 22px;
+  background: var(--surface);
+}
+@media (max-width: 760px) {
+  .desktop-sidebar {
+    display: none;
+  }
+  .app-canvas {
+    margin-left: 0;
+  }
+  .content-container {
+    padding: 24px 18px 100px;
+  }
+  .greeting-section h1 {
+    font-size: 26px;
+  }
+  .greeting-section p {
+    font-size: 14px;
+  }
+  .section-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+}

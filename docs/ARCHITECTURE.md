@@ -1,0 +1,122 @@
+# Arquitetura do help-family
+
+A aplicação web usa HTML, CSS e módulos JavaScript nativos. O servidor Node.js
+atende a API Express e a interface pelo mesmo endereço local. SQLite persiste os
+registros em tabelas relacionadas, acessadas pelo driver `better-sqlite3`.
+
+## Organização e responsabilidades
+
+| Pasta / arquivo                  | Responsabilidade                                            | Onde não colocar lógica        |
+| -------------------------------- | ----------------------------------------------------------- | ------------------------------ |
+| `frontend/index.html`            | Documento inicial e pontos de montagem                      | Regras de negócio e consultas  |
+| `frontend/js/main.js`            | Inicialização, estado da sessão e coordenação dos eventos   | SQL ou criptografia            |
+| `frontend/js/router.js`          | Navegação por fragmentos (`#today`, `#family` etc.)         | Persistência                   |
+| `frontend/js/api.js`             | `fetch`, revisão atual e gravações na API                   | Construção das telas           |
+| `frontend/js/pages/`             | Uma função de apresentação por área                         | Chamadas diretas ao banco      |
+| `frontend/js/components/`        | Controles compartilhados e formulários                      | Regras de integridade do banco |
+| `frontend/css/base.css`          | Cores, temas e estilos globais                              | Layout específico de telas     |
+| `frontend/css/layout.css`        | Navegação, grades e responsividade                          | Regras de domínio              |
+| `frontend/css/components.css`    | Botões, formulários, cartões e diálogos                     | Tokens globais duplicados      |
+| `backend/server.js`              | Inicialização HTTP, Vite e encerramento                     | Manipulação dos cadastros      |
+| `backend/app.js`                 | Composição da aplicação e restrições de acesso              | SQL específico                 |
+| `backend/routes/api.js`          | Contrato HTTP e encaminhamento ao serviço                   | Regras de negócio              |
+| `backend/services/family.js`     | Validação de operações e transações                         | HTML                           |
+| `backend/services/validation.js` | Validação dos dados e relacionamentos                       | Efeitos colaterais             |
+| `backend/services/vault.js`      | Chaves e criptografia autenticada                           | Rotas HTTP                     |
+| `backend/repositories/family.js` | Mapeamento de entidades, consultas e gravação SQL           | Interface                      |
+| `backend/database/`              | Conexão e migrações numeradas                               | Formatação de respostas HTTP   |
+| `scripts/`                       | Migração, backup e ferramentas locais                       | Código necessário no navegador |
+| `tests/`                         | Integração da API, banco e navegador                        | Dados reais                    |
+| `data/`                          | Banco, chave e backups locais, ignorados pelo Git           | Código-fonte                   |
+| `legacy/`                        | Versão React/Vinext e Android originais durante a transição | Novas funcionalidades web      |
+
+## Fluxo de uma alteração
+
+1. A página produz HTML a partir do estado recebido.
+2. `main.js` recebe uma ação explícita do usuário e chama `api.js`.
+3. O cliente envia o recurso alterado e a revisão conhecida em `If-Match`.
+4. A rota identifica a operação e delega ao serviço.
+5. O serviço verifica a revisão, valida o resultado e executa uma transação.
+6. O repositório cifra os campos de conteúdo e grava os registros envolvidos.
+7. A API confirma a revisão nova; a interface recarrega o estado confirmado.
+
+As telas só mostram a alteração como salva depois da confirmação do servidor.
+Uma revisão desatualizada recebe HTTP 409, sem sobrescrever os dados de outra aba.
+O controle de revisão é global para toda a família, deliberadamente simples.
+
+O endpoint `/api/state` é usado para leitura inicial consistente. Gravações comuns
+usam endpoints por recurso; a importação do estado completo existe somente como
+operação administrativa local. O serviço ainda valida uma fotografia completa do
+estado para reaproveitar as verificações de relacionamentos da versão anterior.
+Assim, a validação e a atualização da interface percorrem o conjunto de dados;
+a aplicação ainda não foi otimizada para bancos grandes.
+
+## Banco relacional
+
+```mermaid
+erDiagram
+    members ||--o{ routines : possui
+    medicines ||--o{ presentations : apresenta
+    medicines ||--o{ routines : utilizado
+    presentations ||--o{ routines : define
+    routines ||--|{ routine_times : agenda
+    routines ||--o{ dose_logs : registra
+    members ||--o{ documents : possui
+```
+
+`members`, `medicines`, `presentations`, `routines`, `routine_times`, `dose_logs`
+e `documents` substituem o registro JSON único. `metadata` guarda a revisão e a
+marca de importação. Chaves estrangeiras impedem referências quebradas. Uma
+apresentação deve pertencer ao medicamento da rotina; uma dose deve pertencer ao
+familiar da rotina. Registros relacionados não são apagados em cascata, exceto
+os horários que pertencem exclusivamente à rotina.
+
+Cada dose tem um índice HMAC de rotina + data + horário. Registrar novamente a
+mesma dose atualiza a ocorrência existente. Nomes de tabela e coluna vêm de uma
+lista fixa no repositório; os valores recebidos usam parâmetros SQL.
+
+## Proteção e limites
+
+- Os campos de conteúdo são criptografados individualmente com AES-256-GCM.
+- Cada campo utiliza um nonce aleatório e contexto de tabela, registro e coluna,
+  que impede trocar silenciosamente o conteúdo criptografado entre registros.
+- Identificadores, relacionamentos, ordem dos horários, estado ativo e revisões
+  permanecem disponíveis ao SQLite. Não há criptografia integral do arquivo.
+  IDs herdados da versão antiga podem conter nomes descritivos.
+- A chave fica em `data/encryption.key`, com permissão de arquivo `0600`.
+  Quem possui o banco e a chave pode acessar os dados. A proteção não substitui
+  o controle de acesso ao computador.
+- Se o banco existir e a chave estiver ausente, o servidor recusa a abertura.
+  Uma chave nova não é criada silenciosamente para um banco existente.
+- Os documentos web, limitados a 1 MB por arquivo, ficam cifrados na tabela
+  `documents`. Isso mantém conteúdo e metadados no mesmo backup transacional.
+- A API limita o corpo das requisições a 8 MB. A validação também limita arrays,
+  tamanhos de texto e formatos aceitos.
+- O servidor escuta em `127.0.0.1`. Verifica Host, conexão local e origem.
+  A API não habilita CORS; interface e servidor compartilham a mesma origem.
+- O Vite só pode servir `frontend/` e dependências; banco, chave, arquivos de
+  ambiente e código legado ficam fora da lista de arquivos permitidos.
+- Valores inseridos em templates HTML passam por `escapeHtml`; conteúdo de TXT
+  é exibido com `textContent`, sem execução de marcação do usuário.
+
+## Interface e documentação do código
+
+Cada módulo começa com a descrição de sua responsabilidade. Comentários devem
+explicar decisões ou invariantes, especialmente em transações, criptografia e
+compatibilidade. Use JSDoc nas fronteiras entre módulos; evite comentários que
+apenas repitam cada linha de código.
+
+Uma nova tela entra em `pages/`, é registrada em `router.js` e recebe uma função
+de renderização. Controles compartilhados entram em `components/`. Um novo
+recurso exige migração SQL, mapeamento no repositório, validação, documentação
+do endpoint e testes de integração. Migrações aplicadas não devem ser editadas;
+adicione uma migração numerada e amplie o executor de versões.
+
+## Transição do Android
+
+O Android original está preservado em `legacy/android/`. A nova interface web
+ainda não foi integrada ao armazenamento e ao digitalizador nativos. O servidor
+Node.js do computador não é executado dentro do APK. A próxima etapa móvel
+precisa de um adaptador que respeite esse contrato e de testes no dispositivo.
+Referências a documentos que existem somente no Android são preservadas, mas o
+arquivo deve ser aberto no aplicativo original até sua migração.

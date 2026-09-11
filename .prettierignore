@@ -1,0 +1,9 @@
+legacy/
+app/
+node_modules/
+data/
+dist/
+graphify-out/
+test-results/
+playwright-report/
+package-lock.json

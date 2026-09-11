@@ -15,8 +15,11 @@ Inclua, quando possível:
 - impacto esperado;
 - sugestão de correção, se houver.
 
-O GitHub Pages oferece apenas uma demonstração estática com dados fictícios
-mantidos na sessão do navegador. Ele não hospeda a API, o banco, documentos ou
-dados reais. A aplicação com persistência continua somente local. Relatos sobre
-um possível acesso da demonstração a recursos reais devem ser enviados pelo
-canal privado.
+A versão atual executa a interface, a API e o SQLite somente em localhost.
+Banco, chave e backups ficam fora do Git. A implementação anterior do Android
+e da demonstração está preservada em `legacy/`, incluindo suas automações
+arquivadas. Este projeto não deve ser publicado em Sites ou outro provedor.
+
+Consulte [a arquitetura](../docs/ARCHITECTURE.md) para entender quais campos são
+criptografados e quais metadados permanecem disponíveis ao SQLite. Relatos de
+exposição de dados ou chaves devem ser enviados pelo canal privado.

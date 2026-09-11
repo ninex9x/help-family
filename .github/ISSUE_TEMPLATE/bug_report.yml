@@ -1,5 +1,5 @@
 name: Relatar um problema
-description: Informe um comportamento incorreto ou inesperado no CuraFamília.
+description: Informe um comportamento incorreto ou inesperado no help-family.
 title: "[Bug]: "
 labels: ["bug"]
 body:

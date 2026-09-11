@@ -1,248 +1,73 @@
-# CuraFamília
+# help-family
 
-[![Build clients](https://github.com/ninex9x/cura-family/actions/workflows/build-clients.yml/badge.svg)](https://github.com/ninex9x/cura-family/actions/workflows/build-clients.yml)
-[![Secret scan](https://github.com/ninex9x/cura-family/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/ninex9x/cura-family/actions/workflows/secret-scan.yml)
+Gestão de saúde familiar em **HTML, CSS e JavaScript**, com **API Node.js/Express**
+e **SQLite local**. A interface reúne agenda de doses, familiares, medicamentos,
+histórico e documentos. O projeto funciona exclusivamente em localhost.
 
-[**▶ Abrir demonstração online**](https://ninex9x.github.io/cura-family/)
+## Executar localmente
 
-[**▶ Baixar aplicativo Android de teste**](https://github.com/ninex9x/cura-family/releases/download/v1.0.3-test.1/CuraFamilia-1.0.3-android-debug.apk)
-
-| Hoje | Familiares | Medicamentos |
-| --- | --- | --- |
-| ![Agenda diária do CuraFamília](app/docs/assets/cura-family-today.png) | ![Perfis familiares do CuraFamília](app/docs/assets/cura-family-family.png) | ![Gestão de medicamentos do CuraFamília](app/docs/assets/cura-family-medicines.png) |
-
-Aplicação local-first para organizar familiares, medicamentos, horários,
-registros de doses e documentos de saúde. A mesma experiência React atende ao
-navegador local e ao aplicativo Android empacotado em uma WebView segura.
-
-> [!IMPORTANT]
-> A aplicação real e os dados de saúde funcionam exclusivamente no dispositivo
-> local. A demonstração pública é uma versão estática, usa somente dados
-> fictícios na sessão do navegador e não possui API, banco ou backend hospedado.
-
-[Estudo de caso](app/docs/CASE_STUDY.md) ·
-[Roadmap](app/docs/ROADMAP.md) ·
-[Guia do projeto público](app/docs/GUIA_PROJETO_PUBLICO.md) ·
-[Releases](https://github.com/ninex9x/cura-family/releases)
-
-## Recursos
-
-- agenda diária de medicamentos por familiar;
-- registro de doses tomadas ou não tomadas;
-- catálogo de medicamentos, apresentações e regras de uso;
-- histórico pesquisável, filtrável e paginado;
-- documentos de saúde com visualização de imagens e PDFs;
-- scanner multipágina integrado ao Android;
-- armazenamento cifrado no backend local e no Android;
-- migração segura de instalações antigas;
-- temas claro e escuro persistentes;
-- interface responsiva compartilhada entre web e mobile.
-
-## Demonstração pública
-
-[Experimente o CuraFamília no navegador](https://ninex9x.github.io/cura-family/)
-sem instalar nada. Essa versão serve apenas para explorar a interface:
-
-- começa com perfis e medicamentos fictícios;
-- guarda alterações somente na aba atual com `sessionStorage`;
-- permite redefinir todos os dados pelo aviso de demonstração;
-- não acessa a API local, D1, documentos reais ou qualquer backend;
-- apaga a sessão quando a aba é encerrada.
-
-Não informe nomes, fotos, documentos ou dados médicos reais na demonstração.
-
-## Início rápido
-
-### Requisitos
-
-- Node.js `22.13.0` ou superior — Node 24 recomendado;
-- npm 10 ou superior;
-- Git.
-
-Clone, instale exatamente as dependências do lockfile e inicie:
+Requisitos: Node.js 24 ou superior e npm. Execute na raiz do repositório:
 
 ```bash
-git clone https://github.com/ninex9x/cura-family.git
-cd cura-family/app
 npm ci
 npm run dev
 ```
 
-O comando inicia a interface e a API somente no computador local. O endereço
-correto é exibido pelo terminal durante a inicialização.
+Abra **http://127.0.0.1:3001**. Interface e API compartilham o mesmo servidor.
+O banco e a chave são criados em `data/`, fora do versionamento.
+Uma instalação nova começa vazia; a instalação migrada conserva seus registros.
 
-Na primeira execução, `scripts/dev.mjs` cria uma chave aleatória em `.dev.vars`
-e restringe o arquivo ao usuário atual. O valor não aparece no terminal e o
-arquivo é ignorado pelo Git. `.dev.vars.example` documenta apenas o formato.
+## Estrutura
 
-Todos os comandos npm e Gradle das próximas seções consideram o diretório
-`app/` como diretório atual.
+```text
+frontend/              HTML, estilos e JavaScript do navegador
+  js/pages/            Hoje, familiares, medicamentos, histórico e documentos
+  js/components/       Controles, formulários, diálogos e arquivos
+  css/                 Temas, layout e componentes
+backend/               API e persistência
+  routes/              Endpoints HTTP
+  services/            Regras, validação e criptografia
+  repositories/        Mapeamento e consultas SQL parametrizadas
+  database/migrations/ Estrutura versionada do banco
+scripts/               Migração, backup e servidor de testes
+tests/                Testes automatizados da API e do navegador
+docs/                 Guias de arquitetura, API e operação
+data/                 Banco, chave e backups locais; ignorados pelo Git
+legacy/               Aplicação anterior e Android durante a transição
+```
 
-O modo local:
+## Documentação
 
-- aceita conexões apenas do próprio dispositivo;
-- mantém os dados na máquina do usuário;
-- não exige conta ou autenticação externa;
-- não envia informações para uma demonstração pública;
-- utiliza dados fictícios até que o usuário cadastre os próprios perfis.
+- [Arquitetura e responsabilidades](docs/ARCHITECTURE.md)
+- [API, campos e tratamento de erros](docs/API.md)
+- [Migração, testes, backup e recuperação](docs/MIGRATION.md)
+- [Versão anterior e Android](legacy/README.md)
 
 ## Comandos
 
-| Comando | Finalidade |
-| --- | --- |
-| `npm run dev` | Inicia a interface e a API locais |
-| `npm start` | Inicia o mesmo ambiente local |
-| `npm run typecheck` | Verifica os tipos TypeScript |
-| `npm run lint` | Executa análise estática |
-| `npm test` | Compila o app web e executa os testes |
-| `npm run build:demo` | Gera a demonstração estática com dados fictícios |
-| `npm run build:mobile` | Gera os recursos web do Android |
-| `npm run android:apk` | Gera o APK de depuração no Windows |
+| Comando                     | Função                                                     |
+| --------------------------- | ---------------------------------------------------------- |
+| `npm run dev` / `npm start` | Iniciar interface e API somente em localhost               |
+| `npm run build`             | Gerar os arquivos web em `dist/`, sem publicar             |
+| `npm test`                  | Testar API, SQLite, integridade, criptografia e importação |
+| `npm run test:browser`      | Testar os fluxos da interface com banco descartável        |
+| `npm run format`            | Formatar o código e a documentação da versão nova          |
+| `npm run format:check`      | Conferir a formatação                                      |
+| `npm run migrate:legacy`    | Importar o D1 antigo para um banco novo vazio              |
+| `npm run backup`            | Criar backup consistente do SQLite e da chave locais       |
 
-## Arquitetura
+Antes do primeiro teste de navegador, instale o Chromium de testes com
+`npx playwright install chromium`. Todos os testes executam em localhost e usam
+bancos temporários com dados fictícios.
 
-```text
-Navegador local
-      └──> React / Vinext ──> API local ──> validação ──> AES-256-GCM ──> D1 local
+## Dados e transição
 
-Android
-      └──> React / Vite ────> WebView ────> bridge Java
-                                              ├──> Android Keystore
-                                              ├──> arquivos cifrados
-                                              └──> scanner ML Kit
+Os campos de conteúdo são criptografados com AES-256-GCM. O SQLite mantém
+identificadores e vínculos necessários às relações. A chave está em
+`data/encryption.key`; banco e chave devem ser preservados juntos nos backups.
+A API impede gravações baseadas em revisões antigas de outra sessão.
 
-GitHub Pages
-      └──> React / Vite ────> API simulada ──> sessionStorage da aba
-```
-
-No navegador, `GET /api/state` carrega o snapshot familiar e sua revisão.
-`PUT /api/state` valida tipos, tamanhos, formatos e relacionamentos antes de
-salvar. Uma revisão desatualizada recebe HTTP 409 para impedir sobrescrita
-silenciosa.
-
-No Android, a aplicação funciona offline. A WebView serve somente recursos
-empacotados em `app.local`, e uma bridge nativa controla estado, documentos,
-downloads e digitalização.
-
-## Tecnologias
-
-- TypeScript, React 19 e Next.js 16;
-- Vinext, Vite 8 e Cloudflare Workers local;
-- Drizzle ORM e D1 local;
-- AES-256-GCM e Web Crypto;
-- Java, Android WebView, Android Keystore e ML Kit;
-- Node Test Runner, ESLint e TypeScript;
-- GitHub Actions e Gitleaks.
-
-## Persistência e segurança
-
-### Navegador local
-
-O snapshot é cifrado com AES-256-GCM usando `LOCAL_DATA_ENCRYPTION_KEY`. Hosts
-não locais recebem `403`, escritas exigem mesma origem e o estado completo passa
-por validação antes de chegar ao banco.
-
-### Android
-
-A chave AES é não exportável e fica no Android Keystore. Estado, fotos e PDFs
-são cifrados antes da gravação. Backups do aplicativo estão desabilitados, e a
-WebView bloqueia navegação externa, conteúdo misto e recursos fora da origem
-local empacotada.
-
-Nunca envie nomes, fotos, documentos ou informações médicas reais em commits,
-issues, testes ou capturas públicas.
-
-## Android
-
-### Build de teste
-
-[Baixe diretamente o `CuraFamilia-1.0.3-android-debug.apk`](https://github.com/ninex9x/cura-family/releases/download/v1.0.3-test.1/CuraFamilia-1.0.3-android-debug.apk)
-e abra o arquivo em um aparelho Android para instalar e executar a aplicação.
-
-Esse APK é uma build de teste, não uma versão de produção assinada. Depois de
-instalado, o aplicativo funciona localmente no dispositivo Android e não usa um
-backend hospedado.
-
-### Compilar localmente
-
-O projeto requer JDK 17 e Android SDK 34. No Windows:
-
-```powershell
-npm run android:apk
-```
-
-No Linux ou macOS:
-
-```bash
-npm run build:mobile
-cd android
-chmod +x gradlew
-./gradlew assembleDebug --no-daemon
-```
-
-O APK é criado em `android/app/build/outputs/apk/debug/app-debug.apk`, caminho
-ignorado pelo Git.
-
-## Estrutura do projeto
-
-```text
-.github/                 workflows e arquivos da comunidade
-app/
-├── .openai/             recursos declarados somente para desenvolvimento local
-├── android/             WebView, Keystore e scanner nativos
-├── app/                 interface React e API local
-├── db/                  acesso ao D1 local
-├── demo/                entrada estática com API fictícia por sessão
-├── docs/                estudo de caso, roadmap e guia público
-├── drizzle/             schema e migração idempotente
-├── lib/                 domínio, validação e criptografia
-├── mobile/              entrada Vite usada pelo Android
-├── scripts/             inicialização segura do ambiente local
-├── tests/               testes de domínio, renderização e cofre
-└── worker/              entrada Vinext do servidor local
-README.md                apresentação e início rápido
-```
-
-## Qualidade e automação
-
-Cada push e pull request executa:
-
-- instalação reproduzível com `npm ci`;
-- typecheck e lint;
-- testes e build web;
-- build isolado da demonstração estática;
-- build dos recursos mobile;
-- compilação do APK Android;
-- varredura completa do histórico com Gitleaks.
-
-O repositório também mantém secret scanning, push protection, alertas de
-dependências e relatos privados de vulnerabilidade habilitados no GitHub.
-
-## Aplicação local, demonstração isolada
-
-O GitHub Pages publica somente o cliente estático de demonstração. Ele substitui
-a API por uma implementação em memória e `sessionStorage`, com dados fictícios e
-sem acesso ao D1, à chave local, a uploads ou a qualquer backend. A aplicação
-com persistência de dados de saúde continua restrita ao navegador local e ao
-Android.
-
-`app/.openai/hosting.json` declara apenas recursos usados no desenvolvimento
-local, não contém `project_id` e não é usado para publicar a demonstração. Essa
-separação permite avaliar arquitetura, interface e qualidade sem oferecer um
-serviço público para dados de saúde. O processo está detalhado no
-[guia do projeto público](app/docs/GUIA_PROJETO_PUBLICO.md).
-
-## Contribuindo
-
-Use os templates de bug, melhoria e pull request. Antes de enviar uma mudança,
-execute todos os comandos de validação e confirme que nenhum dado real, segredo,
-banco ou artefato foi incluído. Veja [.github/CONTRIBUTING.md](.github/CONTRIBUTING.md).
-
-Vulnerabilidades devem ser relatadas de forma privada conforme
-[.github/SECURITY.md](.github/SECURITY.md), nunca em uma issue pública.
-
-## Licença
-
-Este repositório não possui licença de código aberto. A publicação permite
-visualização e avaliação do projeto, mas não concede permissão automática para
-copiar, modificar ou redistribuir o código.
+A versão web já utiliza a estrutura nova. O Android e sua digitalização nativa
+permanecem em `legacy/` e ainda precisam de adaptação. Nenhum APK foi migrado
+nesta etapa. As antigas automações de publicação também foram arquivadas nessa
+pasta. Não há implantação ou publicação autorizada para este projeto.

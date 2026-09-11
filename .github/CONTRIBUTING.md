@@ -1,8 +1,7 @@
 # Como contribuir
 
-Obrigado pelo interesse no CuraFamília. O código é público para avaliação e
-portfólio. A aplicação real continua local, enquanto a demonstração pública é
-estática e usa somente dados fictícios na sessão do navegador.
+Obrigado pelo interesse no help-family. O código é público para avaliação e
+portfólio. A aplicação e os testes devem executar somente em localhost.
 
 ## Fluxo recomendado
 
@@ -23,7 +22,7 @@ estática e usa somente dados fictícios na sessão do navegador.
 
 ## Desenvolvimento
 
-No diretório `app/`:
+Na raiz do repositório:
 
 ```bash
 npm ci
@@ -33,17 +32,21 @@ npm run dev
 Antes de abrir um pull request:
 
 ```bash
-npm run typecheck
-npm run lint
+npm run format:check
 npm test
-npm run build:demo
-npm run build:mobile
+npm run test:browser
+npm run build
 ```
 
-Mudanças na integração Android também devem validar o APK. No Windows:
+O Android original está em `legacy/`. Mudanças nessa integração devem ser
+validadas separadamente no dispositivo. No Windows, dentro de `legacy/`:
 
 ```powershell
 npm run android:apk
 ```
 
 Capturas de interface devem usar os dados fictícios incluídos no projeto.
+
+Siga [a arquitetura](../docs/ARCHITECTURE.md) e atualize os guias ao alterar
+contratos ou responsabilidades. Novas funcionalidades web ficam em `frontend/`
+e `backend/`; `legacy/` é preservado durante a transição.
