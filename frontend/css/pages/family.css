@@ -1,0 +1,397 @@
+/* Visual de family, recuperado da interface original em legacy/app/globals.css. */
+.family-page {
+  padding-top: 10px;
+}
+.family-page-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+.family-page-heading h1 {
+  margin: 0 0 4px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 32px;
+}
+.family-page-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+.family-page-heading > button {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--secondary-action);
+  color: white;
+  font-size: 16px;
+  font-weight: 650;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 160ms ease,
+    opacity 160ms ease;
+}
+.family-page-heading > button:hover {
+  opacity: 0.92;
+}
+.family-page-heading > button:active {
+  transform: scale(0.98);
+}
+.family-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(230px, 1fr));
+  gap: 24px;
+}
+.family-profile-card {
+  position: relative;
+  display: flex;
+  min-height: 244px;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+  padding: 24px;
+  border: 1px solid var(--soft-border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
+}
+.family-profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+.family-card-decoration {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 96px;
+  height: 96px;
+  border-radius: 0 0 0 100%;
+  background: color-mix(in srgb, var(--secondary) 20%, transparent);
+  transition: transform 180ms ease;
+}
+.family-profile-card:nth-child(even) .family-card-decoration {
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+}
+.family-profile-card:hover .family-card-decoration {
+  transform: scale(1.1);
+}
+.family-card-header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.family-card-person {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+}
+.family-card-avatar,
+.family-card-photo {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+}
+.family-card-photo {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.family-card-person h2 {
+  overflow: hidden;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.family-card-person p {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.family-more-button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  place-items: center;
+  margin: -4px -8px 0 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+.family-more-button:hover {
+  background: var(--surface-low);
+  color: var(--primary);
+}
+.family-dose-summary {
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+.family-dose-summary > div:first-child {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 9px;
+}
+.family-dose-summary > div:first-child > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.family-dose-summary > div:first-child > span .material-symbols-outlined {
+  font-size: 18px;
+}
+.family-dose-summary strong {
+  color: var(--primary);
+  font-size: 12px;
+  text-align: right;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+.family-dose-summary strong.complete {
+  color: var(--secondary);
+}
+.family-progress-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-highest);
+}
+.family-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--secondary);
+}
+.family-medical-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: -3px 0 0;
+  padding: 9px;
+  border-radius: 8px;
+  background: var(--surface-low);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+.family-medical-note .material-symbols-outlined {
+  flex: 0 0 auto;
+  color: var(--primary);
+  font-size: 17px;
+}
+.family-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: auto;
+}
+.family-history-button,
+.family-medicine-button,
+.family-documents-button {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.family-history-button {
+  background: var(--surface-low);
+}
+.family-history-button:hover {
+  background: var(--surface-mid);
+}
+.family-medicine-button {
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+.family-medicine-button:hover {
+  background: var(--primary-container);
+}
+.family-documents-button {
+  grid-column: 1 / -1;
+  background: var(--info-container);
+  color: var(--on-info-strong);
+}
+.family-documents-button:hover {
+  background: var(--info-container-hover);
+}
+.family-history-button .material-symbols-outlined,
+.family-medicine-button .material-symbols-outlined,
+.family-documents-button .material-symbols-outlined {
+  font-size: 18px;
+}
+.family-add-card {
+  display: flex;
+  min-height: 244px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 2px dashed var(--outline);
+  border-radius: 16px;
+  background: var(--surface);
+  text-align: center;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+.family-add-card:hover {
+  background: var(--surface-low);
+  transform: translateY(-2px);
+}
+.family-add-card > span {
+  display: grid;
+  width: 64px;
+  height: 64px;
+  place-items: center;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 24%, transparent);
+  color: var(--primary);
+}
+.family-add-card > span .material-symbols-outlined {
+  font-size: 32px;
+}
+.family-add-card strong {
+  font-size: 16px;
+}
+.family-add-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+:root[data-theme='dark'] .family-page-heading > button {
+  background: var(--primary-action);
+}
+:root[data-theme='dark'] .family-profile-card {
+  border-color: var(--outline);
+  box-shadow: none;
+}
+:root[data-theme='dark'] .family-profile-card:hover {
+  border-color: #5a5a5a;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.32);
+}
+:root[data-theme='dark'] .family-card-decoration,
+:root[data-theme='dark'] .family-profile-card:nth-child(even) .family-card-decoration {
+  background: rgba(255, 0, 0, 0.12);
+}
+:root[data-theme='dark'] .family-profile-card:nth-child(3n + 1) .family-card-avatar.avatar,
+:root[data-theme='dark']
+  .family-selector
+  .family-option:not(.add-family-option):nth-child(3n + 1)
+  .avatar {
+  background: #cc0000 !important;
+}
+:root[data-theme='dark'] .family-profile-card:nth-child(3n + 2) .family-card-avatar.avatar,
+:root[data-theme='dark']
+  .family-selector
+  .family-option:not(.add-family-option):nth-child(3n + 2)
+  .avatar {
+  background: #505050 !important;
+}
+:root[data-theme='dark'] .family-profile-card:nth-child(3n) .family-card-avatar.avatar,
+:root[data-theme='dark']
+  .family-selector
+  .family-option:not(.add-family-option):nth-child(3n)
+  .avatar {
+  background: #303030 !important;
+  border: 1px solid #5a5a5a;
+}
+:root[data-theme='dark'] .family-progress-track span {
+  background: var(--primary);
+}
+:root[data-theme='dark'] .family-medical-note {
+  background: var(--surface-mid);
+}
+:root[data-theme='dark'] .family-history-button {
+  background: var(--surface-mid);
+  color: var(--text);
+}
+:root[data-theme='dark'] .family-history-button:hover {
+  background: var(--surface-high);
+}
+:root[data-theme='dark'] .family-documents-button {
+  background: var(--surface-high);
+  color: var(--text);
+}
+:root[data-theme='dark'] .family-documents-button:hover {
+  background: var(--surface-highest);
+}
+:root[data-theme='dark'] .family-add-card {
+  border-color: var(--outline);
+  background: var(--surface-low);
+}
+:root[data-theme='dark'] .family-add-card:hover {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+/* Adaptações originais para tema escuro e telas menores. */
+
+@media (max-width: 1050px) {
+  .family-bento-grid {
+    grid-template-columns: repeat(2, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .family-bento-grid {
+    grid-template-columns: 1fr;
+  }
+  .family-page {
+    padding-top: 0;
+  }
+  .family-page-heading {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 17px;
+    margin-bottom: 24px;
+  }
+  .family-page-heading h1 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .family-page-heading > button {
+    width: 100%;
+  }
+}
+.family-profile-card,
+.family-card-person > div {
+  min-width: 0;
+}
+.family-medical-note span:last-child {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (min-width: 768px) and (max-width: 900px) {
+  .family-bento-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

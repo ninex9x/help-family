@@ -7,6 +7,12 @@ import '@fontsource/material-symbols-outlined/400.css';
 import '../css/base.css';
 import '../css/layout.css';
 import '../css/components.css';
+import '../css/forms.css';
+import '../css/pages/today.css';
+import '../css/pages/family.css';
+import '../css/pages/medicines.css';
+import '../css/pages/history.css';
+import '../css/pages/documents.css';
 import { loadState, save } from './api.js';
 import { currentPage, navigate, navigation } from './router.js';
 import { icon, escapeHtml as e, toast, localDate } from './components/ui.js';
@@ -122,6 +128,18 @@ document.addEventListener('click', async (event) => {
       case 'close-dialog':
         closeDialog();
         break;
+      case 'filter': {
+        const key = target.dataset.filterKey;
+        if (!['historyMember', 'documentMember', 'documentCategory'].includes(key)) break;
+        ui[key] = target.dataset.value;
+        ui.historyPage = 1;
+        render();
+        // O HTML é atualizado; devolve o foco ao filtro acionado pelo teclado.
+        document
+          .querySelector(`[data-filter-key="${key}"][aria-pressed="true"]`)
+          ?.focus({ preventScroll: true });
+        break;
+      }
       case 'select-member':
         ui.memberId = id;
         render();
@@ -152,12 +170,21 @@ document.addEventListener('click', async (event) => {
           openForm('drug', state);
           break;
         }
-        if (!state.presentations.length) {
+        if (
+          !state.presentations.some(
+            (p) => !target.dataset.drugId || p.drugId === target.dataset.drugId,
+          )
+        ) {
           toast('Cadastre uma apresentação primeiro.');
-          openForm('presentation', state, undefined, { drugId: state.drugs[0].id });
+          openForm('presentation', state, undefined, {
+            drugId: target.dataset.drugId || state.drugs[0].id,
+          });
           break;
         }
-        openForm('routine', state, undefined, { memberId: id || ui.memberId });
+        openForm('routine', state, undefined, {
+          memberId: id || ui.memberId,
+          drugId: target.dataset.drugId,
+        });
         break;
       case 'routine-edit':
         openForm('routine', state, id);

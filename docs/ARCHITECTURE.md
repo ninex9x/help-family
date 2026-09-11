@@ -15,8 +15,8 @@ registros em tabelas relacionadas, acessadas pelo driver `better-sqlite3`.
 | `frontend/js/pages/`             | Uma função de apresentação por área                         | Chamadas diretas ao banco      |
 | `frontend/js/components/`        | Controles compartilhados e formulários                      | Regras de integridade do banco |
 | `frontend/css/base.css`          | Cores, temas e estilos globais                              | Layout específico de telas     |
-| `frontend/css/layout.css`        | Navegação, grades e responsividade                          | Regras de domínio              |
-| `frontend/css/components.css`    | Botões, formulários, cartões e diálogos                     | Tokens globais duplicados      |
+| `frontend/css/layout.css`        | Navegação e estrutura responsiva compartilhada              | Regras de domínio              |
+| `frontend/css/components.css`    | Controles compartilhados e diálogos                         | Tokens globais duplicados      |
 | `backend/server.js`              | Inicialização HTTP, Vite e encerramento                     | Manipulação dos cadastros      |
 | `backend/app.js`                 | Composição da aplicação e restrições de acesso              | SQL específico                 |
 | `backend/routes/api.js`          | Contrato HTTP e encaminhamento ao serviço                   | Regras de negócio              |
@@ -111,6 +111,10 @@ de renderização. Controles compartilhados entram em `components/`. Um novo
 recurso exige migração SQL, mapeamento no repositório, validação, documentação
 do endpoint e testes de integração. Migrações aplicadas não devem ser editadas;
 adicione uma migração numerada e amplie o executor de versões.
+
+A organização visual está detalhada em [DESIGN.md](DESIGN.md). Os estilos de cada
+tela ficam em `frontend/css/pages/`, e `frontend/css/forms.css` adapta os formulários
+nativos ao painel lateral e aos modais da identidade original.
 
 ## Transição do Android
 

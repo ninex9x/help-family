@@ -28,8 +28,8 @@ test('creates a family, medicine, presentation and routine, records a dose and r
   await page.getByLabel('Nome', { exact: true }).fill('Medicamento Teste');
   await page.getByRole('button', { name: 'Salvar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  const catalog = page.locator('.catalog-item').filter({ hasText: 'Medicamento Teste' });
-  await catalog.getByRole('button', { name: 'Nova apresentação' }).click();
+  const catalog = page.locator('.catalog-drug-card').filter({ hasText: 'Medicamento Teste' });
+  await catalog.getByRole('button', { name: 'Apresentação', exact: true }).click();
   await page.getByLabel('Concentração / dosagem').fill('5 mg');
   await page.getByLabel('Apresentação', { exact: true }).fill('comprimido');
   await page.getByRole('button', { name: 'Salvar', exact: true }).click();
@@ -45,8 +45,8 @@ test('creates a family, medicine, presentation and routine, records a dose and r
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goto('/#today');
   await page.getByRole('button', { name: 'Pessoa Teste', exact: false }).click();
-  await page.getByRole('button', { name: 'Tomei', exact: false }).first().click();
-  await expect(page.locator('.progress-meter strong')).toHaveText('50%');
+  await page.getByRole('button', { name: 'Registrar tomada', exact: true }).first().click();
+  await expect(page.locator('.daily-progress-card > strong')).toHaveText('50%');
   await page.goto('/#history');
   await page
     .getByRole('searchbox', { name: 'Buscar medicamento no histórico' })
@@ -93,7 +93,7 @@ test('all five pages work on mobile and tablet without horizontal overflow', asy
       ).toBe(true);
       await expect(
         page.getByRole('navigation', {
-          name: width < 761 ? 'Navegação móvel' : 'Navegação principal',
+          name: width < 768 ? 'Navegação móvel' : 'Navegação principal',
           exact: true,
         }),
       ).toBeVisible();
@@ -156,7 +156,8 @@ test('profile edits escape markup and support removing an uploaded photo', async
   await page.getByRole('button', { name: 'Salvar', exact: true }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(edited.locator('img')).toHaveCount(0);
-  await expect(edited).toContainText('Nenhuma observação cadastrada.');
+  await expect(edited.locator('.family-medical-note')).toHaveCount(0);
+  await expect(edited).not.toContainText('Nota temporária');
 });
 
 test('renders an uploaded PDF locally', async ({ page }) => {

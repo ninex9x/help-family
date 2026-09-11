@@ -1,0 +1,585 @@
+/* Visual de today, recuperado da interface original em legacy/app/globals.css. */
+.greeting-section {
+  margin-bottom: 30px;
+}
+.greeting-section h1 {
+  margin: 0 0 5px;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 32px;
+}
+.greeting-section p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  text-transform: capitalize;
+}
+.greeting-section p .material-symbols-outlined {
+  font-size: 18px;
+}
+
+.family-selector-section {
+  margin-bottom: 30px;
+}
+.family-selector-section > h2 {
+  margin: 0 0 15px;
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 650;
+}
+.family-selector {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 2px 2px 7px;
+  scrollbar-width: none;
+}
+.family-selector::-webkit-scrollbar {
+  display: none;
+}
+.family-option {
+  display: grid;
+  min-width: 72px;
+  justify-items: center;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+.family-option.selected {
+  color: var(--text);
+  opacity: 1;
+}
+.family-avatar-ring {
+  display: grid;
+  width: 66px;
+  height: 66px;
+  place-items: center;
+  border: 2px solid transparent;
+  border-radius: 50%;
+}
+.family-option.selected .family-avatar-ring {
+  border: 4px solid var(--primary);
+  padding: 2px;
+}
+
+.avatar-family {
+  width: 58px;
+  height: 58px;
+  font-size: 15px;
+}
+.family-selector-photo {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.family-option.selected .avatar-family {
+  width: 54px;
+  height: 54px;
+}
+.add-avatar {
+  background: var(--surface-highest);
+  color: var(--muted);
+}
+.add-avatar .material-symbols-outlined {
+  font-size: 25px;
+}
+.add-family-option:hover {
+  opacity: 1;
+}
+
+.daily-progress-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 14px;
+  margin-bottom: 32px;
+  padding: 24px;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.daily-progress-card h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 650;
+}
+.daily-progress-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+}
+.daily-progress-card > strong {
+  color: var(--primary);
+  font-size: 28px;
+  font-weight: 750;
+}
+.progress-bar {
+  grid-column: 1 / -1;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: var(--surface-high);
+}
+.progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+  transition: width 500ms ease-out;
+}
+
+.next-dose-section {
+  margin-bottom: 35px;
+}
+.dose-alert-label {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  min-height: 29px;
+  align-items: center;
+  gap: 5px;
+  margin-left: 16px;
+  padding: 3px 12px;
+  border-radius: 8px 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+}
+.next-dose-section.late .dose-alert-label {
+  background: var(--error-container);
+  color: var(--on-error-container);
+}
+.next-dose-section.upcoming .dose-alert-label {
+  background: var(--info-container);
+  color: var(--on-info-container);
+}
+.dose-alert-label .material-symbols-outlined {
+  font-size: 16px;
+}
+.next-dose-card {
+  margin-top: -1px;
+  padding: 24px;
+  border-left: 4px solid var(--error);
+  border-radius: 0 12px 12px 12px;
+  background: var(--surface);
+  box-shadow: 0 8px 30px rgba(186, 26, 26, 0.1);
+}
+.next-dose-section.upcoming .next-dose-card {
+  border-left-color: var(--tertiary);
+  box-shadow: 0 8px 30px rgba(7, 95, 171, 0.09);
+}
+.next-dose-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 23px;
+}
+.dose-main-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--error-container);
+  color: var(--error);
+}
+.next-dose-section.upcoming .dose-main-icon {
+  background: var(--info-container);
+  color: var(--tertiary);
+}
+.dose-main-icon .material-symbols-outlined {
+  font-size: 32px;
+}
+.next-dose-title h2 {
+  margin: 0 0 2px;
+  font-size: 24px;
+  font-weight: 650;
+  line-height: 32px;
+}
+.next-dose-title p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 28px;
+}
+.dose-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+  margin-bottom: 28px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--surface-low);
+}
+.dose-details-grid div {
+  display: grid;
+  gap: 3px;
+}
+.dose-details-grid small {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+.dose-details-grid strong {
+  font-size: 18px;
+  font-weight: 600;
+}
+.next-dose-section.late .dose-details-grid div:first-child strong {
+  color: var(--error);
+  font-size: 20px;
+}
+.dose-details-grid > p {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 24px;
+}
+.dose-details-grid > p .material-symbols-outlined {
+  flex: 0 0 auto;
+  color: var(--primary);
+  font-size: 20px;
+}
+.dose-action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.dose-action-buttons button {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 650;
+  transition:
+    transform 150ms ease,
+    opacity 150ms ease;
+}
+.dose-action-buttons button:active {
+  transform: scale(0.985);
+}
+.confirm-dose-button {
+  border: 0;
+  background: var(--primary-action);
+  color: white;
+  box-shadow: 0 4px 12px rgba(164, 60, 18, 0.2);
+}
+.confirm-dose-button:hover {
+  opacity: 0.9;
+}
+.skip-dose-button {
+  border: 1px solid var(--outline);
+  background: var(--surface-mid);
+  color: var(--text);
+}
+.skip-dose-button:hover {
+  background: var(--surface-highest);
+}
+.all-done-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 34px;
+  padding: 24px;
+  border: 1px solid rgba(1, 107, 84, 0.35);
+  border-radius: 12px;
+  background: var(--success-surface);
+  color: var(--secondary);
+}
+.all-done-card > .material-symbols-outlined {
+  font-size: 38px;
+}
+.all-done-card h2 {
+  margin: 0 0 3px;
+  color: var(--text);
+  font-size: 20px;
+}
+.all-done-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.today-agenda-section > h2 {
+  margin: 0 0 24px;
+  font-size: 22px;
+  font-weight: 650;
+  line-height: 28px;
+}
+.agenda-period {
+  margin-bottom: 29px;
+}
+.agenda-period > h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--surface-highest);
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 650;
+}
+.agenda-period > h3 .material-symbols-outlined {
+  font-size: 21px;
+}
+.agenda-list {
+  display: grid;
+  gap: 14px;
+}
+.agenda-item {
+  display: grid;
+  grid-template-columns: 64px 40px minmax(160px, 1fr) auto auto;
+  gap: 16px;
+  align-items: center;
+  min-height: 72px;
+  padding: 14px 16px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--surface);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+.agenda-item > time {
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+}
+.agenda-status-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border: 1px solid var(--outline);
+  border-radius: 50%;
+  background: var(--surface-high);
+  color: var(--muted);
+}
+.agenda-status-icon .material-symbols-outlined {
+  font-size: 20px;
+}
+.agenda-item h4 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 650;
+}
+.agenda-item h4 span {
+  color: var(--muted);
+  font-weight: 500;
+}
+.agenda-item p {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.agenda-status-label {
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: var(--surface-highest);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+.agenda-item.taken {
+  opacity: 0.7;
+}
+.agenda-item.taken > time,
+.agenda-item.taken h4 {
+  text-decoration: line-through;
+}
+.agenda-item.taken .agenda-status-icon {
+  border-color: transparent;
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.agenda-item.taken .agenda-status-label {
+  background: var(--secondary-container);
+  color: var(--on-secondary-container);
+}
+.agenda-item.late {
+  border-color: var(--error-container);
+  background: rgba(255, 218, 214, 0.2);
+}
+.agenda-item.late > time {
+  color: var(--error);
+  font-weight: 650;
+}
+.agenda-item.late .agenda-status-icon {
+  border-color: transparent;
+  background: var(--error);
+  color: var(--on-error-action);
+}
+.agenda-item.late .agenda-status-label {
+  background: var(--error);
+  color: var(--on-error-action);
+}
+.agenda-item.skipped .agenda-status-icon {
+  border-color: transparent;
+  background: var(--skipped-container);
+  color: var(--on-skipped-container);
+}
+.agenda-item.skipped .agenda-status-label {
+  background: var(--skipped-container);
+  color: var(--on-skipped-container);
+}
+.quick-dose-button {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+}
+.quick-dose-button:hover {
+  background: var(--primary-container);
+}
+.empty-card {
+  display: grid;
+  justify-items: center;
+  padding: 48px 20px;
+  border: 1px dashed var(--outline);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+.empty-card > .material-symbols-outlined {
+  color: var(--primary);
+  font-size: 40px;
+}
+.empty-card h3 {
+  margin: 10px 0 3px;
+}
+.empty-card p {
+  margin: 0 0 15px;
+  color: var(--muted);
+}
+.empty-card button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-action);
+  color: white;
+  font-weight: 650;
+}
+
+/* Adaptações originais para tema escuro e telas menores. */
+
+:root[data-theme='dark'] .daily-progress-card,
+:root[data-theme='dark'] .agenda-item {
+  border: 1px solid var(--outline);
+  box-shadow: none;
+}
+:root[data-theme='dark'] .next-dose-card,
+:root[data-theme='dark'] .all-done-card {
+  box-shadow: none;
+}
+:root[data-theme='dark'] .agenda-item:hover {
+  border-color: #5a5a5a;
+  box-shadow: none;
+}
+
+@media (max-width: 767px) {
+  .greeting-section {
+    margin-bottom: 27px;
+  }
+  .greeting-section h1 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .family-selector-section {
+    margin-bottom: 27px;
+  }
+  .daily-progress-card {
+    padding: 20px;
+  }
+  .next-dose-card {
+    padding: 20px;
+  }
+  .next-dose-title h2 {
+    font-size: 22px;
+    line-height: 28px;
+  }
+  .next-dose-title p {
+    font-size: 16px;
+    line-height: 24px;
+  }
+  .dose-action-buttons {
+    grid-template-columns: 1fr;
+  }
+  .agenda-item {
+    grid-template-columns: 55px 40px minmax(105px, 1fr) auto;
+    gap: 10px;
+    padding: 13px 11px;
+  }
+  .agenda-item > time {
+    font-size: 16px;
+  }
+  .agenda-item h4 {
+    font-size: 14px;
+  }
+  .agenda-status-label {
+    grid-column: 3;
+    justify-self: start;
+    margin-top: -9px;
+  }
+  .quick-dose-button {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .dose-details-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 10px;
+  }
+  .dose-details-grid strong {
+    font-size: 16px;
+  }
+  .agenda-item {
+    grid-template-columns: 47px 36px minmax(95px, 1fr) auto;
+  }
+  .agenda-status-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .agenda-item h4 span {
+    display: block;
+    margin-top: 2px;
+  }
+}
+/* Conteúdo variável não deve empurrar a navegação para fora da tela. */
+.family-option {
+  flex: 0 0 auto;
+  max-width: 120px;
+}
+.family-option > span:last-child {
+  max-width: 120px;
+  overflow-wrap: anywhere;
+}
+.next-dose-title > div,
+.dose-details-grid > div,
+.agenda-item > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 767px) {
+  .greeting-section p {
+    font-size: 14px;
+  }
+}

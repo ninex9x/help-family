@@ -1,4 +1,4 @@
-/** Apresenta catálogo, apresentações e rotinas; as ações são tratadas pelo coordenador. */
+/** Um cartão por medicamento reúne apresentações e regras, evitando duplicar o catálogo. */
 import {
   button,
   empty,
@@ -11,63 +11,113 @@ export function renderMedicines(state, ui) {
   const routines = state.routines.filter(
     (r) => ui.medicineMember === 'all' || r.memberId === ui.medicineMember,
   );
-  return /* HTML */ `<section class="page-heading">
+  const drugs = state.drugs.filter(
+    (drug) => ui.medicineMember === 'all' || routines.some((r) => r.drugId === drug.id),
+  );
+  return /* HTML */ `<section class="medication-management-page">
+    <header class="medication-page-heading">
       <div>
-        <span class="eyebrow">ROTINA DE CUIDADOS</span>
         <h1>Medicamentos</h1>
-        <p>Organize o catálogo e as regras de uso da família.</p>
+        <p>Gerencie o catálogo e as regras de uso da sua família.</p>
       </div>
       ${button(`${icon('add')}Cadastrar Medicamento`, 'drug-new')}
-    </section>
-    <section class="filter-bar">
-      ${memberFilter(state, ui.medicineMember, 'medicineMember')}${button('Criar Regra de Uso', 'routine-new')}
-    </section>
+    </header>
+    <div class="filter-bar">
+      ${memberFilter(state, ui.medicineMember, 'medicineMember')}${button(`${icon('add')}Criar Regra de Uso`, 'routine-new', ui.medicineMember === 'all' ? '' : ui.medicineMember, 'text-button')}
+    </div>
     <div class="medication-bento-grid">
       ${
-        routines
-          .map((routine) => {
-            const drug = formatDose(state, routine);
-            const member = state.members.find((item) => item.id === routine.memberId);
-            return /* HTML */ `<article class="medication-glass-card">
-              <span class="eyebrow">${e(member?.name)}</span>
-              <h2>${e(drug.name)}</h2>
-              <p>${e(drug.strength)} · ${e(drug.form)}</p>
-              <strong>${e(routine.quantity)}</strong>
-              <div class="time-tags">
-                ${routine.times.map((time) => /* HTML */ `<span>${e(time)}</span>`).join('')}
-              </div>
-              <p>${e(routine.instruction)}</p>
-              <div class="card-footer">
-                <span>${routine.active === false ? 'Pausado' : 'Ativo'}</span
-                >${button(routine.active === false ? 'Reativar' : 'Pausar', 'routine-toggle', routine.id, 'secondary-button')}${button('Editar', 'routine-edit', routine.id, 'text-button')}
-              </div>
-            </article>`;
-          })
-          .join('') || empty('Nenhuma regra de uso para este filtro.')
-      }
-    </div>
-    <section class="catalog-section">
-      <div class="section-heading"><h2>Catálogo de medicamentos</h2></div>
-      ${
-        state.drugs
-          .map(
-            (drug) =>
-              /* HTML */ `<article class="catalog-item">
-                <div>
-                  <h3>${e(drug.name)}</h3>
-                  <div class="time-tags">
-                    ${state.presentations
-                      .filter((p) => p.drugId === drug.id)
-                      .map((p) => /* HTML */ `<span>${e(p.strength)} · ${e(p.form)}</span>`)
-                      .join('')}
+        drugs
+          .map((drug) => {
+            const presentations = state.presentations.filter((p) => p.drugId === drug.id);
+            const linked = routines.filter((r) => r.drugId === drug.id);
+            return /* HTML */ `<article class="medication-glass-card catalog-drug-card">
+              <div
+                class="medication-card-decoration"
+                style="background:${e(drug.color)}"
+                aria-hidden="true"
+              ></div>
+              <header class="medication-card-header">
+                <div class="medication-card-person">
+                  <span
+                    class="medication-feature-icon"
+                    style="background:${e(drug.color)}1f;color:${e(drug.color)}"
+                    >${icon(/insulina|gota|xarope|líquido/i.test(drug.name) ? 'medication_liquid' : 'pill')}</span
+                  >
+                  <div>
+                    <h2 title="${e(drug.name)}">${e(drug.name)}</h2>
+                    <p>
+                      ${presentations.length}
+                      ${presentations.length === 1 ? 'apresentação' : 'apresentações'}
+                    </p>
                   </div>
                 </div>
-                <div class="catalog-card-actions">
-                  ${button('Nova apresentação', 'presentation-new', drug.id, 'secondary-button')}${button('Editar', 'drug-edit', drug.id, 'text-button')}
+                <button
+                  class="family-more-button"
+                  data-action="drug-edit"
+                  data-id="${e(drug.id)}"
+                  aria-label="Editar medicamento ${e(drug.name)}"
+                >
+                  ${icon('edit')}
+                </button>
+              </header>
+              <div class="catalog-presentations">
+                <small>Apresentações</small>
+                <div>
+                  ${presentations.map((p) => /* HTML */ `<span>${e(p.strength)} · ${e(p.form)}</span>`).join('') || '<p class="catalog-no-routines">Adicione a primeira apresentação.</p>'}
                 </div>
-              </article>`,
-          )
-          .join('') || empty('Cadastre um medicamento e suas apresentações.')
+              </div>
+              <div class="catalog-routines">
+                <small>Regras de uso</small>${
+                  linked
+                    .map((routine) => {
+                      const member = state.members.find((m) => m.id === routine.memberId);
+                      const dose = formatDose(state, routine);
+                      return /* HTML */ `<div
+                        class="catalog-routine-row ${routine.active === false ? 'inactive' : ''}"
+                      >
+                        <div>
+                          <strong>${e(member?.name)}</strong
+                          ><span>${e(dose.strength)} · ${e(routine.quantity)}</span
+                          ><small>${icon('schedule')}${routine.times.map(e).join(' · ')}</small>
+                        </div>
+                        <button
+                          class="routine-edit-button"
+                          data-action="routine-edit"
+                          data-id="${e(routine.id)}"
+                          aria-label="Editar regra de ${e(member?.name)} para ${e(drug.name)}"
+                        >
+                          ${icon('edit')}</button
+                        ><button
+                          class="medicine-switch"
+                          role="switch"
+                          aria-checked="${routine.active !== false}"
+                          aria-label="Ativar regra de ${e(member?.name)} para ${e(drug.name)}"
+                          data-action="routine-toggle"
+                          data-id="${e(routine.id)}"
+                        >
+                          <span></span>
+                        </button>
+                      </div>`;
+                    })
+                    .join('') ||
+                  '<p class="catalog-no-routines">Nenhuma regra de uso vinculada.</p>'
+                }
+              </div>
+              <footer class="catalog-card-actions">
+                ${button(`${icon('add_circle')}Apresentação`, 'presentation-new', drug.id, 'secondary-button')}<button
+                  data-action="routine-new"
+                  data-drug-id="${e(drug.id)}"
+                  data-id="${e(ui.medicineMember === 'all' ? '' : ui.medicineMember)}"
+                >
+                  ${icon('link')}Vincular
+                </button>
+              </footer>
+            </article>`;
+          })
+          .join('') ||
+        empty('Nenhum medicamento para este filtro. Cadastre um medicamento para começar.')
       }
-    </section>`;
+    </div>
+  </section>`;
 }

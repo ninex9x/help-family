@@ -45,20 +45,33 @@ legacy/               Aplicação anterior e Android durante a transição
 
 ## Comandos
 
-| Comando                     | Função                                                     |
-| --------------------------- | ---------------------------------------------------------- |
-| `npm run dev` / `npm start` | Iniciar interface e API somente em localhost               |
-| `npm run build`             | Gerar os arquivos web em `dist/`, sem publicar             |
-| `npm test`                  | Testar API, SQLite, integridade, criptografia e importação |
-| `npm run test:browser`      | Testar os fluxos da interface com banco descartável        |
-| `npm run format`            | Formatar o código e a documentação da versão nova          |
-| `npm run format:check`      | Conferir a formatação                                      |
-| `npm run migrate:legacy`    | Importar o D1 antigo para um banco novo vazio              |
-| `npm run backup`            | Criar backup consistente do SQLite e da chave locais       |
+| Comando                     | Função                                                        |
+| --------------------------- | ------------------------------------------------------------- |
+| `npm run dev` / `npm start` | Iniciar interface e API somente em localhost                  |
+| `npm run build`             | Gerar os arquivos web em `dist/`, sem publicar                |
+| `npm test`                  | Testar API, SQLite, integridade, criptografia e importação    |
+| `npm run test:browser`      | Testar os fluxos da interface com banco descartável           |
+| `npm run format`            | Formatar o código e a documentação da versão nova             |
+| `npm run format:check`      | Conferir a formatação                                         |
+| `npm run migrate:legacy`    | Importar o D1 antigo para um banco novo vazio                 |
+| `npm run demo:pdfs`         | Criar PDFs fictícios e adicioná-los ao site em localhost:3001 |
+| `npm run backup`            | Criar backup consistente do SQLite e da chave locais          |
 
 Antes do primeiro teste de navegador, instale o Chromium de testes com
 `npx playwright install chromium`. Todos os testes executam em localhost e usam
 bancos temporários com dados fictícios.
+
+## PDFs de demonstração
+
+Com o site local em execução (`npm run dev`), execute `npm run demo:pdfs` para
+criar uma receita, um exame de duas páginas e um atestado inteiramente fictícios.
+As amostras aparecem em **Documentos**, no perfil **Pessoa Demonstração**, com
+prefixo `[DEMO]`. Cada página indica que não possui validade médica.
+
+O gerador usa o Chromium do Playwright e o modelo em
+`scripts/fixtures/demo-pdf-template.html`. Os PDFs ficam em `data/demo-pdfs/`,
+fora do Git, e também são armazenados na API local. Reexecutar o comando adiciona
+somente as amostras ausentes, sem duplicar o perfil ou substituir documentos.
 
 ## Dados e transição
 

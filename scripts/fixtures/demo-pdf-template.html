@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <title>{{TITLE}} — documento fictício</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 17mm 18mm 20mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: #21352f;
+        font:
+          11pt/1.6 Arial,
+          sans-serif;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 3px solid #a43c12;
+        padding-bottom: 15px;
+      }
+      .brand {
+        color: #a43c12;
+        font-size: 23pt;
+        font-weight: bold;
+        letter-spacing: -1px;
+      }
+      .tag {
+        padding: 5px 10px;
+        border-radius: 5px;
+        background: #ffdbcf;
+        color: #822800;
+        font-size: 9pt;
+        font-weight: bold;
+      }
+      .notice {
+        margin: 18px 0 24px;
+        padding: 12px 16px;
+        border: 1px solid #e5b4a0;
+        border-radius: 8px;
+        background: #fff5ee;
+        color: #822800;
+        font-size: 10pt;
+      }
+      .eyebrow {
+        margin: 24px 0 4px;
+        color: #016b54;
+        font-size: 9pt;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+      h1 {
+        margin: 0 0 20px;
+        font-size: 25pt;
+        line-height: 1.2;
+      }
+      h2 {
+        margin: 22px 0 10px;
+        font-size: 14pt;
+      }
+      p {
+        margin: 0 0 14px;
+      }
+      .identity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        padding: 18px;
+        margin-bottom: 24px;
+        border-radius: 8px;
+        background: #f3f5f3;
+      }
+      small {
+        display: block;
+        color: #61726a;
+        font-size: 9pt;
+      }
+      .item {
+        padding: 18px 0;
+        border-bottom: 1px solid #dde5df;
+        break-inside: avoid;
+      }
+      .item strong {
+        font-size: 13pt;
+      }
+      .item p {
+        margin: 6px 0 0;
+        color: #53645c;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 10pt;
+      }
+      th {
+        background: #e7f3ed;
+        text-align: left;
+        color: #016b54;
+      }
+      th,
+      td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #dfe8e1;
+      }
+      tbody tr:nth-child(even) {
+        background: #f6f8f6;
+      }
+      .callout {
+        margin-top: 24px;
+        padding: 18px;
+        border-left: 4px solid #016b54;
+        background: #eff8f3;
+      }
+      .signature {
+        margin-top: 38px;
+        padding-top: 12px;
+        border-top: 1px dashed #aebcb3;
+        color: #61726a;
+      }
+      .page-break {
+        break-before: page;
+      }
+      .bars {
+        display: grid;
+        gap: 16px;
+        margin: 24px 0;
+      }
+      .bar {
+        height: 13px;
+        border-radius: 20px;
+        background: #e7ece8;
+        overflow: hidden;
+        margin-top: 6px;
+      }
+      .bar span {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: #016b54;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">help-family</div>
+      <span class="tag">AMOSTRA FICTÍCIA</span>
+    </header>
+    <div class="notice">
+      <strong>DEMONSTRAÇÃO — SEM VALIDADE MÉDICA.</strong><br />Dados inventados apenas para testar
+      a visualização. Não utilizar para tratamento, diagnóstico ou comprovação de atendimento.
+    </div>
+    <p class="eyebrow">Acervo de demonstração</p>
+    <h1>{{TITLE}}</h1>
+    <div class="identity">
+      <div><small>Perfil inteiramente fictício</small><strong>Pessoa Demonstração</strong></div>
+      <div><small>Data de geração</small><strong>{{DATE}}</strong></div>
+    </div>
+    {{CONTENT}}
+  </body>
+</html>

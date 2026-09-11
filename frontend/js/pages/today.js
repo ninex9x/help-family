@@ -1,4 +1,4 @@
-/** Apresenta as doses do dia, divididas por período e filtradas por familiar. */
+/** Agenda por familiar: destaca a primeira dose pendente e resume as confirmações do dia. */
 import {
   avatar,
   button,
@@ -8,6 +8,20 @@ import {
   localDate,
   formatDose,
 } from '../components/ui.js';
+
+/** Usa o mesmo comando no destaque e na agenda, mantendo horário e rotina explícitos. */
+function doseButton(dose, status, label, className, ariaLabel = label) {
+  return /* HTML */ `<button
+    class="${className}"
+    data-action="dose"
+    data-id="${e(dose.routine.id)}"
+    data-time="${e(dose.time)}"
+    data-status="${status}"
+    aria-label="${e(ariaLabel)}"
+  >
+    ${icon(status === 'taken' ? 'check' : 'close')}${className === 'quick-dose-button' ? '' : e(label)}
+  </button>`;
+}
 export function renderToday(state, ui) {
   const today = localDate();
   const member = state.members.find((item) => item.id === ui.memberId) ?? state.members[0];
@@ -29,33 +43,87 @@ export function renderToday(state, ui) {
   const progress = doses.length ? Math.round((taken / doses.length) * 100) : 0;
   const greeting =
     now.getHours() < 12 ? 'Bom dia' : now.getHours() < 18 ? 'Boa tarde' : 'Boa noite';
+  const focus = doses.find((dose) => !dose.log);
+  const drug = focus && formatDose(state, focus.routine);
+  const late = focus?.time < clock;
   return /* HTML */ `<section class="greeting-section">
       <h1>${greeting}!</h1>
       <p>
         ${icon('calendar_today')}${e(new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(now))}
       </p>
     </section>
-    <section class="family-selector-section">
-      <div class="section-heading">
-        <h2>Familiares acompanhados</h2>
-        ${button('Adicionar Familiar', 'member-new', '', 'text-button')}
-      </div>
+    <section class="family-selector-section" aria-label="Selecionar familiar">
+      <h2>Familiares acompanhados</h2>
       <div class="family-selector">
-        ${state.members.map((item) => /* HTML */ `<button class="member-chip ${item.id === member?.id ? 'selected' : ''}" data-action="select-member" data-id="${e(item.id)}">${avatar(item)}<span>${e(item.name)}</span></button>`).join('')}
+        ${state.members.map((item) => /* HTML */ `<button class="family-option ${item.id === member?.id ? 'selected' : ''}" data-action="select-member" data-id="${e(item.id)}" aria-pressed="${item.id === member?.id}" aria-label="Selecionar ${e(item.name)}"><span class="family-avatar-ring">${avatar(item, 'avatar-family')}</span><span>${e(item.name)}</span></button>`).join('')}
+        <button
+          class="family-option add-family-option"
+          data-action="member-new"
+          aria-label="Adicionar Familiar"
+        >
+          <span class="family-avatar-ring"
+            ><span class="avatar avatar-family add-avatar">${icon('add')}</span></span
+          ><span>Novo</span>
+        </button>
       </div>
     </section>
     <section class="daily-progress-card">
       <div>
-        <span class="eyebrow">CUIDADO DIÁRIO</span>
         <h2>Progresso Diário</h2>
         <p>${taken} de ${doses.length} doses tomadas${member ? ` por ${e(member.name)}` : ''}</p>
       </div>
-      <div class="progress-meter">
-        <strong>${progress}%</strong
-        ><progress value="${progress}" max="100" aria-label="Doses tomadas"></progress>
+      <strong>${progress}%</strong>
+      <div
+        class="progress-bar"
+        role="progressbar"
+        aria-label="Progresso diário"
+        aria-valuenow="${progress}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <span style="width:${progress}%"></span>
       </div>
     </section>
-    <section class="agenda-section">
+    ${
+      focus
+        ? /* HTML */ `<section
+            class="next-dose-section ${late ? 'late' : 'upcoming'}"
+            aria-label="Dose em destaque"
+          >
+            <div class="dose-alert-label">
+              ${icon(late ? 'schedule' : 'notifications_active')}${late ? 'Dose atrasada' : 'Próxima dose'}
+            </div>
+            <article class="next-dose-card">
+              <div class="next-dose-title">
+                <span class="dose-main-icon">${icon('medication')}</span>
+                <div>
+                  <h2>${e(drug.name)}</h2>
+                  <p>${e(drug.strength)} · ${e(focus.routine.quantity)}</p>
+                </div>
+              </div>
+              <div class="dose-details-grid">
+                <div><small>Horário programado</small><strong>${e(focus.time)}</strong></div>
+                <div><small>Familiar</small><strong>${e(member?.name)}</strong></div>
+                ${focus.routine.instruction ? /* HTML */ `<p>${icon('info')}${e(focus.routine.instruction)}</p>` : ''}
+              </div>
+              <div class="dose-action-buttons">
+                ${doseButton(focus, 'taken', 'Registrar tomada', 'confirm-dose-button')}${doseButton(focus, 'skipped', 'Não foi tomada', 'skip-dose-button')}
+              </div>
+            </article>
+          </section>`
+        : doses.length
+          ? /* HTML */ `<section class="all-done-card">
+              ${icon('task_alt')}
+              <div>
+                <h2>Registros do dia concluídos</h2>
+                <p>
+                  ${taken === doses.length ? 'Todas as doses foram marcadas como tomadas.' : 'Todas as doses têm registro. Consulte os detalhes na agenda.'}
+                </p>
+              </div>
+            </section>`
+          : ''
+    }
+    <section class="today-agenda-section">
       <div class="section-heading">
         <h2>Agenda de Hoje</h2>
         ${button('Criar Regra de Uso', 'routine-new', member?.id || '', 'text-button')}
@@ -73,41 +141,25 @@ export function renderToday(state, ui) {
                       : d.time >= '18:00',
                 );
                 if (!entries.length) return '';
-                return /* HTML */ `<section class="period-section">
+                return /* HTML */ `<section class="agenda-period">
                   <h3>${icon(['light_mode', 'wb_sunny', 'dark_mode'][index])}${period}</h3>
-                  <div class="dose-list">
+                  <div class="agenda-list">
                     ${entries
-                      .map(({ routine, time, log }) => {
-                        const drug = formatDose(state, routine);
-                        return /* HTML */ `<article
-                          class="dose-card ${log ? 'dose-completed' : ''}"
-                        >
-                          <div class="dose-time">${e(time)}</div>
-                          <div class="dose-info">
-                            <h3>${e(drug.name)}</h3>
-                            <p>${e(drug.strength)} · ${e(routine.quantity)}</p>
-                            <small>${e(routine.instruction)}</small
-                            >${!log && time < clock ? '<span class="status-badge late">Pendente</span>' : ''}
+                      .map((dose) => {
+                        const drug = formatDose(state, dose.routine);
+                        const status = dose.log?.status || (dose.time < clock ? 'late' : 'pending');
+                        return /* HTML */ `<article class="agenda-item ${status}">
+                          <time>${e(dose.time)}</time
+                          ><span class="agenda-status-icon"
+                            >${icon({ taken: 'check', skipped: 'close', late: 'priority_high', pending: 'schedule' }[status])}</span
+                          >
+                          <div>
+                            <h4>${e(drug.name)} <span>${e(drug.strength)}</span></h4>
+                            <p>${e(member?.name)} · ${e(dose.routine.quantity)}</p>
                           </div>
-                          <div class="dose-actions">
-                            ${log ? /* HTML */ `<span class="status-badge">${log.status === 'taken' ? 'Tomada' : 'Não foi tomada'}</span>` : ''}<button
-                              class="${log ? 'text-button' : 'primary-button'}"
-                              data-action="dose"
-                              data-id="${e(routine.id)}"
-                              data-time="${e(time)}"
-                              data-status="taken"
-                            >
-                              ${icon('check')} ${log ? 'Marcar tomada' : 'Tomei'}</button
-                            ><button
-                              class="text-button"
-                              data-action="dose"
-                              data-id="${e(routine.id)}"
-                              data-time="${e(time)}"
-                              data-status="skipped"
-                            >
-                              Não foi tomada
-                            </button>
-                          </div>
+                          <span class="agenda-status-label"
+                            >${{ taken: 'Tomada', skipped: 'Não tomada', late: 'Atrasada', pending: 'Pendente' }[status]}</span
+                          >${doseButton(dose, dose.log?.status === 'taken' ? 'skipped' : 'taken', '', 'quick-dose-button', `${dose.log?.status === 'taken' ? 'Marcar não tomada' : 'Registrar tomada'}: ${drug.name} às ${dose.time}`)}
                         </article>`;
                       })
                       .join('')}

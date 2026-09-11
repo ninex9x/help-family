@@ -1,8 +1,7 @@
 .primary-button,
 .secondary-button,
 .text-button,
-.icon-button,
-.history-pagination button {
+.icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -18,8 +17,7 @@
   background: var(--primary-action);
   color: white;
 }
-.secondary-button,
-.history-pagination button {
+.secondary-button {
   background: var(--surface-high);
   color: var(--text);
 }
@@ -65,27 +63,6 @@ textarea {
   border: 0;
   min-width: 0;
 }
-.family-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 18px 0 28px;
-}
-.member-chip {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 15px;
-  border: 1px solid var(--outline);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text);
-}
-.member-chip.selected {
-  background: var(--primary-soft);
-  border-color: var(--primary);
-  color: var(--primary-dark);
-}
 .avatar {
   display: inline-flex;
   align-items: center;
@@ -103,125 +80,6 @@ textarea {
   width: 60px;
   height: 60px;
   font-size: 20px;
-}
-.daily-progress-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  background: var(--primary-soft);
-  padding: 28px;
-  border-radius: 24px;
-  margin: 24px 0 32px;
-}
-.daily-progress-card h2 {
-  margin: 8px 0;
-}
-.progress-meter {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-width: 100px;
-}
-.progress-meter strong {
-  font-size: 32px;
-  color: var(--primary);
-}
-.progress-meter progress {
-  width: 120px;
-  accent-color: var(--primary);
-}
-.period-section {
-  margin: 24px 0;
-}
-.period-section > h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-  color: var(--muted);
-}
-.dose-list {
-  display: grid;
-  gap: 12px;
-}
-.dose-card {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  background: var(--surface);
-  padding: 20px;
-  border: 1px solid var(--soft-border);
-  border-radius: 18px;
-}
-.dose-time {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary);
-}
-.dose-info {
-  flex: 1;
-}
-.dose-info h3 {
-  margin: 0 0 6px;
-  font-size: 18px;
-}
-.dose-info p {
-  margin: 0 0 6px;
-  color: var(--muted);
-}
-.dose-info small {
-  color: var(--muted);
-}
-.dose-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  max-width: 240px;
-  justify-content: flex-end;
-}
-.dose-completed {
-  opacity: 0.8;
-}
-.status-badge {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 8px;
-  font-size: 12px;
-  background: var(--success-surface);
-  color: var(--secondary);
-}
-.status-badge.skipped,
-.status-badge.late {
-  background: var(--skipped-container);
-  color: var(--on-skipped-container);
-}
-.time-tags {
-  display: flex;
-  gap: 7px;
-  flex-wrap: wrap;
-  margin: 12px 0;
-}
-.time-tags span {
-  background: var(--surface-mid);
-  padding: 6px 10px;
-  border-radius: 9px;
-  font-size: 12px;
-}
-.catalog-section {
-  margin-top: 36px;
-}
-.catalog-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  padding: 20px;
-  border-bottom: 1px solid var(--soft-border);
-}
-.catalog-item h3 {
-  margin: 0;
-  font-size: 17px;
 }
 .empty-state {
   display: flex;
@@ -342,30 +200,7 @@ textarea {
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
-@media (max-width: 760px) {
-  .dose-card {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .dose-info {
-    min-width: 180px;
-  }
-  .dose-actions {
-    width: 100%;
-    max-width: none;
-    justify-content: flex-start;
-  }
-  .daily-progress-card {
-    padding: 20px;
-    gap: 12px;
-  }
-  .progress-meter progress {
-    width: 90px;
-  }
-  .catalog-item {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+@media (max-width: 767px) {
   .app-dialog {
     padding: 20px;
   }

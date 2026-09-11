@@ -15,7 +15,8 @@
     "migrate:legacy": "node scripts/migrate-legacy.js",
     "backup": "node scripts/backup.js",
     "format": "prettier --write frontend backend scripts tests docs README.md package.json vite.config.js playwright.config.js",
-    "format:check": "prettier --check frontend backend scripts tests docs README.md package.json vite.config.js playwright.config.js"
+    "format:check": "prettier --check frontend backend scripts tests docs README.md package.json vite.config.js playwright.config.js",
+    "demo:pdfs": "node scripts/create-demo-pdfs.js"
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",

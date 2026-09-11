@@ -59,6 +59,15 @@ export function memberFilter(state, value, name, all = true) {
     ${all ? '<option value="all">Todos os familiares</option>' : ''}${options(state.members, value)}
   </select>`;
 }
+/** Botões de filtro reutilizados no histórico e nos documentos; a seleção fica em ui. */
+export function filterChips(items, selected, key) {
+  return items
+    .map(
+      (item) =>
+        `<button type="button" class="${item.id === selected ? 'active' : ''}" data-action="filter" data-filter-key="${escapeHtml(key)}" data-value="${escapeHtml(item.id)}" aria-pressed="${item.id === selected}">${escapeHtml(item.name)}</button>`,
+    )
+    .join('');
+}
 let toastTimer;
 export function toast(message) {
   const container = document.querySelector('#notifications');

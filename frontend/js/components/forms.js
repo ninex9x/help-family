@@ -33,7 +33,7 @@ export function openForm(kind, state, id, context = {}) {
     fields = `${select('Medicamento', 'drugId', state.drugs, context.drugId)}${field('Concentração / dosagem', 'strength', '', 'text', 'required placeholder="Ex.: 500 mg" maxlength="80"')}${field('Apresentação', 'form', '', 'text', 'required placeholder="Ex.: comprimido, gotas" maxlength="60"')}`;
   } else if (kind === 'routine') {
     title = item.id ? 'Editar Regra de Uso' : 'Criar Regra de Uso';
-    const drugId = item.drugId || state.drugs[0]?.id;
+    const drugId = item.drugId || context.drugId || state.drugs[0]?.id;
     fields = `${select('Familiar', 'memberId', state.members, item.memberId || context.memberId)}${select('Medicamento', 'drugId', state.drugs, drugId)}${select(
       'Apresentação',
       'presentationId',
@@ -61,6 +61,8 @@ export function openForm(kind, state, id, context = {}) {
       </footer>
     </form>`,
   );
+  dialog.classList.add('form-dialog');
+  dialog.dataset.formKind = kind;
   if (kind === 'routine') {
     dialog.querySelector('[name="drugId"]').addEventListener('change', (event) => {
       dialog.querySelector('[name="presentationId"]').innerHTML = options(
