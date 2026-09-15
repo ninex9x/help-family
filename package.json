@@ -16,14 +16,21 @@
     "backup": "node scripts/backup.js",
     "format": "prettier --write frontend backend scripts tests docs README.md package.json vite.config.js playwright.config.js",
     "format:check": "prettier --check frontend backend scripts tests docs README.md package.json vite.config.js playwright.config.js",
-    "demo:pdfs": "node scripts/create-demo-pdfs.js"
+    "demo:pdfs": "node scripts/create-demo-pdfs.js",
+    "db:setup": "node scripts/postgres/setup.js",
+    "db:stop": "node scripts/postgres/stop.js",
+    "dev:accounts": "node backend/accounts-server.js",
+    "test:accounts": "node --test tests/accounts/*.test.js"
   },
   "dependencies": {
     "@fontsource/inter": "5.3.0",
     "@fontsource/material-symbols-outlined": "5.3.5",
+    "@node-rs/argon2": "2.2.1",
     "better-sqlite3": "13.0.3",
     "express": "5.2.1",
-    "pdfjs-dist": "6.3.289"
+    "pdfjs-dist": "6.3.289",
+    "pg": "8.23.0",
+    "sharp": "0.35.4"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

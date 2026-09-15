@@ -31,7 +31,7 @@ export function createApp(directory) {
     res.set('Referrer-Policy', 'no-referrer');
     next();
   });
-  app.use('/api', express.json({ limit: '8mb' }), apiRoutes(service));
+  app.use('/api', express.json({ limit: '17mb' }), apiRoutes(service));
   app.use('/api', (error, _req, res, _next) => {
     const status = error.status ?? (error.code?.startsWith('SQLITE_CONSTRAINT') ? 409 : 500);
     res.status(status).json({

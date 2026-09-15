@@ -4,15 +4,25 @@ A aplicação web usa HTML, CSS e módulos JavaScript nativos. O servidor Node.j
 atende a API Express e a interface pelo mesmo endereço local. SQLite persiste os
 registros em tabelas relacionadas, acessadas pelo driver `better-sqlite3`.
 
+## Evolução para contas e famílias separadas
+
+O usuário confirmou o requisito de contas independentes. A arquitetura-alvo e a
+transição estão em [Backend multiusuário](decisions/001-multiuser-backend.md).
+Uma aplicação separada implementa contas, sessões e famílias com PostgreSQL,
+em localhost:3002. Sua estrutura, instalação, endpoints e limites estão no
+[guia de contas](ACCOUNTS.md). Suas telas de acesso e seleção de família são
+geradas pelo servidor e funcionam sem JavaScript. Nenhum dado clínico foi migrado. As demais seções abaixo descrevem o site atual em
+localhost:3001: SQLite local, sem autenticação e sem isolamento por família.
+
 ## Organização e responsabilidades
 
 | Pasta / arquivo                  | Responsabilidade                                            | Onde não colocar lógica        |
 | -------------------------------- | ----------------------------------------------------------- | ------------------------------ |
 | `frontend/index.html`            | Documento inicial e pontos de montagem                      | Regras de negócio e consultas  |
-| `frontend/js/main.js`            | Inicialização, estado da sessão e coordenação dos eventos   | SQL ou criptografia            |
+| `frontend/js/main.js`            | Transporte HTTP, estado visual e coordenação dos eventos    | SQL ou criptografia            |
 | `frontend/js/router.js`          | Navegação por fragmentos (`#today`, `#family` etc.)         | Persistência                   |
 | `frontend/js/api.js`             | `fetch`, revisão atual e gravações na API                   | Construção das telas           |
-| `frontend/js/pages/`             | Uma função de apresentação por área                         | Chamadas diretas ao banco      |
+| `backend/web/pages/`             | HTML, filtros e cálculos de cada tela no servidor           | Chamadas diretas ao banco      |
 | `frontend/js/components/`        | Controles compartilhados e formulários                      | Regras de integridade do banco |
 | `frontend/css/base.css`          | Cores, temas e estilos globais                              | Layout específico de telas     |
 | `frontend/css/layout.css`        | Navegação e estrutura responsiva compartilhada              | Regras de domínio              |
@@ -32,24 +42,27 @@ registros em tabelas relacionadas, acessadas pelo driver `better-sqlite3`.
 
 ## Fluxo de uma alteração
 
-1. A página produz HTML a partir do estado recebido.
+1. O backend produz o HTML e os resultados da tela solicitada.
 2. `main.js` recebe uma ação explícita do usuário e chama `api.js`.
-3. O cliente envia o recurso alterado e a revisão conhecida em `If-Match`.
+3. O cliente envia os campos/comandos sem calcular dados e a revisão em `If-Match`.
 4. A rota identifica a operação e delega ao serviço.
 5. O serviço verifica a revisão, valida o resultado e executa uma transação.
 6. O repositório cifra os campos de conteúdo e grava os registros envolvidos.
-7. A API confirma a revisão nova; a interface recarrega o estado confirmado.
+7. A API confirma a revisão; o navegador solicita e exibe o HTML atualizado.
 
 As telas só mostram a alteração como salva depois da confirmação do servidor.
 Uma revisão desatualizada recebe HTTP 409, sem sobrescrever os dados de outra aba.
 O controle de revisão é global para toda a família, deliberadamente simples.
 
-O endpoint `/api/state` é usado para leitura inicial consistente. Gravações comuns
-usam endpoints por recurso; a importação do estado completo existe somente como
+O navegador usa `/api/views/:page`, `/api/forms/:kind` e comandos em `/api/actions/`.
+O endpoint `/api/state` permanece para compatibilidade de ferramentas locais e
+não é mais chamado pelas telas. A importação do estado completo existe somente como
 operação administrativa local. O serviço ainda valida uma fotografia completa do
 estado para reaproveitar as verificações de relacionamentos da versão anterior.
-Assim, a validação e a atualização da interface percorrem o conjunto de dados;
-a aplicação ainda não foi otimizada para bancos grandes.
+A renderização e a validação ainda percorrem registros no servidor; o SQLite
+ainda não foi otimizado para bancos grandes. A consulta das telas exclui os bytes
+dos documentos no SQL; abrir um arquivo consulta somente seu registro. Veja
+[Regras no backend](BACKEND-FIRST.md) para os limites e contratos dessa separação.
 
 ## Banco relacional
 
@@ -90,7 +103,7 @@ lista fixa no repositório; os valores recebidos usam parâmetros SQL.
   Uma chave nova não é criada silenciosamente para um banco existente.
 - Os documentos web, limitados a 1 MB por arquivo, ficam cifrados na tabela
   `documents`. Isso mantém conteúdo e metadados no mesmo backup transacional.
-- A API limita o corpo das requisições a 8 MB. A validação também limita arrays,
+- A API limita o corpo das requisições a 17 MiB (para comportar uma foto de 12 MB em base64). A validação também limita arrays,
   tamanhos de texto e formatos aceitos.
 - O servidor escuta em `127.0.0.1`. Verifica Host, conexão local e origem.
   A API não habilita CORS; interface e servidor compartilham a mesma origem.
@@ -106,8 +119,10 @@ explicar decisões ou invariantes, especialmente em transações, criptografia e
 compatibilidade. Use JSDoc nas fronteiras entre módulos; evite comentários que
 apenas repitam cada linha de código.
 
-Uma nova tela entra em `pages/`, é registrada em `router.js` e recebe uma função
-de renderização. Controles compartilhados entram em `components/`. Um novo
+Uma nova tela clínica entra em `backend/web/pages/`, é registrada em
+`backend/web/screens.js` e recebe uma função de renderização no servidor. A
+navegação visual fica em `frontend/js/router.js`; componentes HTML ficam em
+`backend/web/components/` e interações com o DOM em `frontend/js/components/`. Um novo
 recurso exige migração SQL, mapeamento no repositório, validação, documentação
 do endpoint e testes de integração. Migrações aplicadas não devem ser editadas;
 adicione uma migração numerada e amplie o executor de versões.

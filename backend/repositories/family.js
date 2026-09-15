@@ -55,15 +55,26 @@ export const resources = {
 };
 
 export function createRepository(db, vault) {
-  function list(resource) {
+  function list(resource, { metadataOnly = false, id } = {}) {
     const spec = resources[resource];
+    const fields = Object.entries(spec.fields).filter(
+      ([name]) => !(metadataOnly && resource === 'documents' && name === 'dataUrl'),
+    );
+    const columns = [
+      'id',
+      ...Object.values(spec.refs ?? {}),
+      ...fields.map(([, column]) => column),
+      ...(resource === 'routines' ? ['active'] : []),
+    ];
     return db
-      .prepare(`SELECT * FROM ${spec.table} ORDER BY rowid`)
-      .all()
+      .prepare(
+        `SELECT ${columns.join(',')} FROM ${spec.table}${id === undefined ? '' : ' WHERE id=?'} ORDER BY rowid`,
+      )
+      .all(...(id === undefined ? [] : [id]))
       .map((row) => {
         const item = { id: row.id };
         for (const [name, column] of Object.entries(spec.refs ?? {})) item[name] = row[column];
-        for (const [name, column] of Object.entries(spec.fields)) {
+        for (const [name, column] of fields) {
           const value = vault.open(row[column], `${spec.table}:${row.id}:${column}`);
           if (value !== undefined) item[name] = value;
         }
@@ -114,6 +125,15 @@ export function createRepository(db, vault) {
     snapshot: db.transaction(() => ({
       state: Object.fromEntries(
         Object.entries(resources).map(([name, spec]) => [spec.key, list(name)]),
+      ),
+      revision: db.prepare('SELECT revision FROM metadata WHERE id=1').get().revision,
+    })),
+    viewSnapshot: db.transaction(() => ({
+      state: Object.fromEntries(
+        Object.entries(resources).map(([name, spec]) => [
+          spec.key,
+          list(name, { metadataOnly: true }),
+        ]),
       ),
       revision: db.prepare('SELECT revision FROM metadata WHERE id=1').get().revision,
     })),

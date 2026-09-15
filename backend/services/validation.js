@@ -32,7 +32,7 @@ function readString(source, key, path, errors, options) {
   const value = source[key];
   if (value === undefined && options.optional) return undefined;
   if (value === '' && options.optional) return undefined;
-  if (typeof value !== 'string' || value.length === 0 || value.length > options.max) {
+  if (typeof value !== 'string' || value.trim().length === 0 || value.length > options.max) {
     errors.push(`${path}.${key} deve ser um texto entre 1 e ${options.max} caracteres`);
     return undefined;
   }

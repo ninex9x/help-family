@@ -20,7 +20,7 @@ O frontend atual não importa código de `legacy/` em execução.
 | `frontend/css/pages/documents.css` | Busca, categorias e cartões de documentos                            |
 
 `frontend/js/main.js` importa os estilos nessa ordem. Cada tela tem seu próprio
-módulo em `frontend/js/pages/`; alterações específicas devem ficar no arquivo CSS
+template no servidor em `backend/web/pages/`; alterações específicas devem ficar no arquivo CSS
 correspondente. Evite reintroduzir regras dessas telas em `layout.css` ou
 `components.css`, pois isso cria sobreposições difíceis de manter.
 
@@ -53,3 +53,26 @@ banco temporário em `127.0.0.1:3011`. Capturas e banco não entram no Git.
 
 O desenvolvimento normal continua em `http://127.0.0.1:3001`. Todo teste e execução
 permanecem em localhost.
+
+## Área de contas
+
+Cadastro, login, escolha e edição de famílias ficam em localhost:3002, com HTML
+gerado por `backend/web/accounts/`. Os formulários funcionam sem JavaScript e
+mostram os erros retornados pelo servidor. Essas telas reutilizam `layout.css`,
+`components.css`, `forms.css` e `pages/family.css`: mesma barra lateral de 256 px,
+marca, cabeçalho móvel, cartões de 16 px de raio e campos de 56 px de altura na
+área autenticada. **Login e cadastro têm layout público próprio**, com marca e
+formulário centralizados, sem menu lateral nem navegação de aplicativo. Seguir a
+identidade visual significa compartilhar cores, fonte e acabamento; não copiar
+a estrutura do painel para telas que têm outra função.
+`frontend/css/pages/accounts.css` contém apenas adaptações para os fluxos de conta
+e os arquivos locais da fonte Inter, com os pesos 400, 500, 600 e 700.
+
+A paleta escura é definida pelos tokens `--theme-dark-*` de `base.css`. As telas
+clínicas aplicam esses valores por `data-theme`; as telas SSR usam a preferência
+do sistema, sem JavaScript. Não criar uma paleta independente para contas nem
+reescrever os cartões e a navegação em cada tela nova.
+
+`npm run test:accounts` verifica o fluxo com JavaScript desativado. A revisão visual
+inclui login, cadastro, lista e edição de família, em desktop e celular, nos dois
+temas. As capturas usam contas fictícias e ficam em `test-results/`, fora do Git.

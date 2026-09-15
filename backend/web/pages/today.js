@@ -8,6 +8,7 @@ import {
   localDate,
   formatDose,
 } from '../components/ui.js';
+import { localClock, timeZone } from '../../shared/local-clock.js';
 
 /** Usa o mesmo comando no destaque e na agenda, mantendo horário e rotina explícitos. */
 function doseButton(dose, status, label, className, ariaLabel = label) {
@@ -26,7 +27,7 @@ export function renderToday(state, ui) {
   const today = localDate();
   const member = state.members.find((item) => item.id === ui.memberId) ?? state.members[0];
   const now = new Date();
-  const clock = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const clock = localClock(now).time;
   const doses = state.routines
     .filter((r) => r.memberId === member?.id && r.active !== false)
     .flatMap((routine) =>
@@ -42,14 +43,14 @@ export function renderToday(state, ui) {
   const taken = doses.filter((dose) => dose.log?.status === 'taken').length;
   const progress = doses.length ? Math.round((taken / doses.length) * 100) : 0;
   const greeting =
-    now.getHours() < 12 ? 'Bom dia' : now.getHours() < 18 ? 'Boa tarde' : 'Boa noite';
+    localClock(now).hour < 12 ? 'Bom dia' : localClock(now).hour < 18 ? 'Boa tarde' : 'Boa noite';
   const focus = doses.find((dose) => !dose.log);
   const drug = focus && formatDose(state, focus.routine);
   const late = focus?.time < clock;
   return /* HTML */ `<section class="greeting-section">
       <h1>${greeting}!</h1>
       <p>
-        ${icon('calendar_today')}${e(new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full' }).format(now))}
+        ${icon('calendar_today')}${e(new Intl.DateTimeFormat('pt-BR', { dateStyle: 'full', timeZone }).format(now))}
       </p>
     </section>
     <section class="family-selector-section" aria-label="Selecionar familiar">

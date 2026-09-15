@@ -2,6 +2,8 @@
 import { Router } from 'express';
 import { resources } from '../repositories/family.js';
 import { AppError } from '../services/family.js';
+import { webRoutes } from '../web/routes.js';
+import { prepareResource } from '../services/uploads.js';
 
 export function apiRoutes(service) {
   const router = Router();
@@ -13,6 +15,7 @@ export function apiRoutes(service) {
     res.json({ status: 'ok', storage: 'sqlite', localOnly: true }),
   );
   router.get('/state', (_req, res) => res.json(service.snapshot()));
+  router.use(webRoutes(service));
   for (const resource of Object.keys(resources)) {
     router.get(`/${resource}`, (_req, res) => res.json({ items: service.list(resource) }));
     router.get(`/${resource}/:id`, (req, res) => {
@@ -21,14 +24,14 @@ export function apiRoutes(service) {
       res.json({ item });
     });
     for (const method of ['post', 'patch', 'delete']) {
-      router[method](`/${resource}${method === 'post' ? '' : '/:id'}`, (req, res) => {
+      router[method](`/${resource}${method === 'post' ? '' : '/:id'}`, async (req, res) => {
         const match = req.get('If-Match');
         const expected = match && /^"?\d+"?$/.test(match) ? Number(match.replaceAll('"', '')) : NaN;
         const result = service.change(
           resource,
           method.toUpperCase(),
           req.params.id,
-          req.body ?? {},
+          method === 'delete' ? {} : await prepareResource(resource, req.body ?? {}),
           expected,
         );
         res.status(method === 'post' ? 201 : 200).json(result);

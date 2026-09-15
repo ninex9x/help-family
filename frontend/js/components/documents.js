@@ -1,35 +1,18 @@
 /** Visualização e download locais. Conteúdo textual nunca é interpretado como HTML. */
 import { escapeHtml as e } from './ui.js';
 import { mountDialog as mount, setDialogCleanup } from './modal.js';
-function documentBlob(doc, state) {
-  if (!doc.dataUrl) {
-    if (doc.nativeDocumentId)
-      throw new Error(
-        'Este arquivo está no armazenamento do Android. Abra-o no aplicativo original.',
-      );
-    return new Blob(
-      [
-        `help-family\n\n${doc.title}\nFamiliar: ${state.members.find((m) => m.id === doc.memberId)?.name || ''}\nData: ${doc.date}\n\nDocumento de demonstração.`,
-      ],
-      { type: 'text/plain' },
-    );
-  }
-  const comma = doc.dataUrl.indexOf(',');
-  const bytes = doc.dataUrl.slice(0, comma).includes(';base64')
-    ? Uint8Array.from(atob(doc.dataUrl.slice(comma + 1)), (char) => char.charCodeAt(0))
-    : new TextEncoder().encode(decodeURIComponent(doc.dataUrl.slice(comma + 1)));
-  return new Blob([bytes], { type: doc.mimeType });
-}
-export function downloadDocument(doc, state) {
-  const url = URL.createObjectURL(documentBlob(doc, state));
+import { request } from '../api.js';
+export function downloadDocument(id) {
   const link = document.createElement('a');
-  link.href = url;
-  link.download = doc.fileName;
+  link.href = `/api/files/${encodeURIComponent(id)}?download=1`;
+  link.download = '';
   link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
 }
-export async function viewDocument(doc, state) {
-  const blob = documentBlob(doc, state);
+export async function viewDocument(id) {
+  const { item: doc } = await request(`/file-info/${encodeURIComponent(id)}`);
+  const response = await fetch(`/api/files/${encodeURIComponent(id)}`, { cache: 'no-store' });
+  if (!response.ok) throw new Error((await response.json()).error);
+  const blob = await response.blob();
   const url = URL.createObjectURL(blob);
   const dialog = mount(
     doc.title,

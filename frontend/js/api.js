@@ -1,33 +1,30 @@
-/** Cliente HTTP: serializa gravações e só avança a revisão após confirmação do servidor. */
+/** Transporte HTTP e revisão confirmada. Não calcula nem valida regras de negócio. */
 let revision = 0;
 let pending = false;
+export function acceptRevision(value) {
+  revision = value;
+}
 export async function request(path, options = {}) {
   const response = await fetch(`/api${path}`, {
     cache: 'no-store',
     ...options,
     headers: { 'Content-Type': 'application/json', ...options.headers },
   });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error || 'Não foi possível concluir a operação.');
+  const result = response.status === 204 ? null : await response.json();
+  if (!response.ok) throw new Error(result?.error || 'Não foi possível concluir a operação.');
   return result;
 }
-export async function loadState() {
-  const result = await request('/state');
-  revision = result.revision;
-  return result.state;
-}
-/** Atualiza um recurso e retorna a fotografia confirmada para renderização. */
-export async function save(resource, body, id, method) {
+export async function command(path, body, method = 'POST') {
   if (pending) throw new Error('Aguarde a gravação atual.');
   pending = true;
   try {
-    const result = await request(`/${resource}${id ? `/${encodeURIComponent(id)}` : ''}`, {
-      method: method || (id ? 'PATCH' : 'POST'),
+    const result = await request(path, {
+      method,
       headers: { 'If-Match': String(revision) },
       body: JSON.stringify(body),
     });
     revision = result.revision;
-    return await loadState();
+    return result;
   } finally {
     pending = false;
   }

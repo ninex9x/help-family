@@ -13,19 +13,14 @@ import '../css/pages/family.css';
 import '../css/pages/medicines.css';
 import '../css/pages/history.css';
 import '../css/pages/documents.css';
-import { loadState, save } from './api.js';
-import { currentPage, navigate, navigation } from './router.js';
-import { icon, escapeHtml as e, toast, localDate } from './components/ui.js';
+import { request, acceptRevision, command } from './api.js';
+import { currentPage, navigate } from './router.js';
+import { toast, escapeHtml as e } from './components/ui.js';
 import { openForm, formPayload } from './components/forms.js';
 import { closeDialog } from './components/modal.js';
 import { viewDocument, downloadDocument } from './components/documents.js';
-import { renderToday } from './pages/today.js';
-import { renderFamily } from './pages/family.js';
-import { renderMedicines } from './pages/medicines.js';
-import { renderHistory } from './pages/history.js';
-import { renderDocuments } from './pages/documents.js';
 
-let state;
+// Estado exclusivamente visual. Não guarda registros clínicos, permissões ou resultados calculados.
 const ui = {
   memberId: '',
   medicineMember: 'all',
@@ -36,22 +31,13 @@ const ui = {
   documentCategory: 'all',
   documentSearch: '',
 };
-const screens = {
-  today: renderToday,
-  family: renderFamily,
-  medicines: renderMedicines,
-  history: renderHistory,
-  documents: renderDocuments,
-};
+let renderId = 0;
 let theme = 'light';
 try {
   theme =
     localStorage.getItem('help-family-theme') ||
-    localStorage.getItem('cura-family-theme') ||
     (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-} catch {
-  /* Use default if storage is disabled. */
-}
+} catch {}
 function applyTheme() {
   document.documentElement.dataset.theme = theme === 'dark' ? 'dark' : 'light';
   document.documentElement.style.colorScheme = theme;
@@ -59,58 +45,29 @@ function applyTheme() {
     theme === 'dark' ? '#0f0f0f' : '#f4f1ea';
 }
 applyTheme();
-function render() {
-  if (!state) return;
-  const page = currentPage();
-  const label = theme === 'dark' ? 'Ativar modo claro' : 'Ativar modo escuro';
-  const themeButton = /* HTML */ `<button
-    class="theme-toggle"
-    data-action="theme"
-    aria-label="${label}"
-  >
-    ${icon(theme === 'dark' ? 'light_mode' : 'dark_mode')}<span
-      >${theme === 'dark' ? 'Modo claro' : 'Modo escuro'}</span
-    >
-  </button>`;
-  const links = navigation
-    .map(
-      ([id, label, glyph]) =>
-        /* HTML */ `<a
-          href="#${id}"
-          class="${id === page ? 'active' : ''}"
-          ${id === page ? 'aria-current="page"' : ''}
-          >${icon(glyph)}<span>${label}</span></a
-        >`,
-    )
-    .join('');
-  document.querySelector('#app').innerHTML = /* HTML */ `<main class="help-app">
-    <aside class="desktop-sidebar">
-      <a class="brand-block" href="#today"
-        ><strong>help-family</strong><span>Gestão de Saúde</span></a
-      >
-      <nav class="desktop-navigation" aria-label="Navegação principal">${links}</nav>
-      <div class="sidebar-footer-actions">
-        ${themeButton}<small>${icon('lock')} Dados neste dispositivo</small>
-      </div>
-    </aside>
-    <section class="app-canvas">
-      <header class="mobile-topbar">
-        <a class="mobile-brand" href="#today">help-family</a>${themeButton}
-      </header>
-      <div class="content-container">
-        ${screens[page](state, ui)}
-        <footer class="app-disclaimer">
-          ${icon('health_and_safety')}Este aplicativo não substitui orientação médica.
-        </footer>
-      </div>
-    </section>
-    <nav class="mobile-bottom-nav" aria-label="Navegação móvel">${links}</nav>
-  </main>`;
+async function render() {
+  const ticket = ++renderId;
+  const result = await request(`/views/${currentPage()}?${new URLSearchParams({ ...ui, theme })}`);
+  if (ticket !== renderId) return;
+  // Mantém foco e seleção ao substituir o fragmento após uma busca assíncrona.
+  const focused = document.activeElement;
+  const search = focused?.dataset.search;
+  const start = focused?.selectionStart;
+  const end = focused?.selectionEnd;
+  acceptRevision(result.revision);
+  document.querySelector('#app').innerHTML = result.html;
+  if (search) {
+    const input = document.querySelector(`[data-search="${search}"]`);
+    input?.focus({ preventScroll: true });
+    input?.setSelectionRange(start, end);
+  }
 }
-async function mutate(resource, body, id, method) {
-  state = await save(resource, body, id, method);
-  render();
+async function mutate(path, body, method) {
+  renderId++;
+  await command(path, body, method);
+  await render();
 }
+const report = (error) => toast(error.message);
 document.addEventListener('click', async (event) => {
   const target = event.target.closest('[data-action]');
   if (!target) return;
@@ -123,18 +80,17 @@ document.addEventListener('click', async (event) => {
           localStorage.setItem('help-family-theme', theme);
         } catch {}
         applyTheme();
-        render();
+        await render();
         break;
       case 'close-dialog':
         closeDialog();
         break;
       case 'filter': {
         const key = target.dataset.filterKey;
-        if (!['historyMember', 'documentMember', 'documentCategory'].includes(key)) break;
+        if (!Object.hasOwn(ui, key)) break;
         ui[key] = target.dataset.value;
         ui.historyPage = 1;
-        render();
-        // O HTML é atualizado; devolve o foco ao filtro acionado pelo teclado.
+        await render();
         document
           .querySelector(`[data-filter-key="${key}"][aria-pressed="true"]`)
           ?.focus({ preventScroll: true });
@@ -142,59 +98,34 @@ document.addEventListener('click', async (event) => {
       }
       case 'select-member':
         ui.memberId = id;
-        render();
+        await render();
         break;
       case 'member-new':
-        openForm('member', state);
+        await openForm('member');
         break;
       case 'member-edit':
-        openForm('member', state, id);
+        await openForm('member', id);
         break;
       case 'drug-new':
-        openForm('drug', state);
+        await openForm('drug');
         break;
       case 'drug-edit':
-        openForm('drug', state, id);
+        await openForm('drug', id);
         break;
       case 'presentation-new':
-        openForm('presentation', state, undefined, { drugId: id });
+        await openForm('presentation', undefined, { drugId: id });
         break;
       case 'routine-new':
-        if (!state.members.length) {
-          toast('Cadastre um familiar primeiro.');
-          openForm('member', state);
-          break;
-        }
-        if (!state.drugs.length) {
-          toast('Cadastre um medicamento primeiro.');
-          openForm('drug', state);
-          break;
-        }
-        if (
-          !state.presentations.some(
-            (p) => !target.dataset.drugId || p.drugId === target.dataset.drugId,
-          )
-        ) {
-          toast('Cadastre uma apresentação primeiro.');
-          openForm('presentation', state, undefined, {
-            drugId: target.dataset.drugId || state.drugs[0].id,
-          });
-          break;
-        }
-        openForm('routine', state, undefined, {
+        await openForm('routine', undefined, {
           memberId: id || ui.memberId,
-          drugId: target.dataset.drugId,
+          drugId: target.dataset.drugId || '',
         });
         break;
       case 'routine-edit':
-        openForm('routine', state, id);
+        await openForm('routine', id);
         break;
       case 'routine-toggle':
-        await mutate(
-          'routines',
-          { active: state.routines.find((r) => r.id === id).active === false },
-          id,
-        );
+        await mutate(`/actions/routines/${encodeURIComponent(id)}/toggle`, {});
         toast('Regra de uso atualizada.');
         break;
       case 'member-medicines':
@@ -214,52 +145,36 @@ document.addEventListener('click', async (event) => {
         navigate('documents');
         break;
       case 'history-page':
-        ui.historyPage = Number(id);
-        render();
+        ui.historyPage = id;
+        await render();
         break;
-      case 'dose': {
-        const routine = state.routines.find((r) => r.id === id);
-        const now = new Date();
-        await mutate('dose-logs', {
+      case 'dose':
+        await mutate('/actions/doses', {
           routineId: id,
-          memberId: routine.memberId,
-          date: localDate(now),
           scheduledTime: target.dataset.time,
           status: target.dataset.status,
-          recordedAt: `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`,
         });
         toast('Dose registrada.');
         break;
-      }
       case 'document-new':
-        if (!state.members.length) {
-          toast('Cadastre um familiar primeiro.');
-          break;
-        }
-        openForm('document', state, undefined, { memberId: ui.documentMember });
+        await openForm('document', undefined, { memberId: ui.documentMember });
         break;
       case 'document-view':
-        await viewDocument(
-          state.documents.find((d) => d.id === id),
-          state,
-        );
+        await viewDocument(id);
         break;
       case 'document-download':
-        downloadDocument(
-          state.documents.find((d) => d.id === id),
-          state,
-        );
+        downloadDocument(id);
         break;
       case 'document-delete':
         if (confirm('Excluir este documento deste computador?')) {
-          await mutate('documents', {}, id, 'DELETE');
+          await mutate(`/documents/${encodeURIComponent(id)}`, {}, 'DELETE');
           closeDialog();
           toast('Documento excluído.');
         }
         break;
     }
   } catch (error) {
-    toast(error.message);
+    report(error);
   }
 });
 document.addEventListener('change', (event) => {
@@ -267,19 +182,15 @@ document.addEventListener('change', (event) => {
   if (key && Object.hasOwn(ui, key)) {
     ui[key] = event.target.value;
     ui.historyPage = 1;
-    render();
+    render().catch(report);
   }
 });
 document.addEventListener('input', (event) => {
   const key = event.target.dataset.search;
   if (key && Object.hasOwn(ui, key)) {
-    const start = event.target.selectionStart;
     ui[key] = event.target.value;
     ui.historyPage = 1;
-    render();
-    const replacement = document.querySelector(`[data-search="${key}"]`);
-    replacement.focus();
-    replacement.setSelectionRange(start, start);
+    render().catch(report);
   }
 });
 document.addEventListener('submit', async (event) => {
@@ -290,8 +201,10 @@ document.addEventListener('submit', async (event) => {
   submit.disabled = true;
   form.querySelector('.form-error').textContent = '';
   try {
-    const { resource, body } = await formPayload(form, state);
-    await mutate(resource, body, form.dataset.id || undefined);
+    await mutate(
+      `/actions/forms/${encodeURIComponent(form.dataset.form)}?${new URLSearchParams({ id: form.dataset.id || '' })}`,
+      await formPayload(form),
+    );
     if (form.isConnected) closeDialog();
     toast('Salvo neste dispositivo.');
   } catch (error) {
@@ -301,26 +214,21 @@ document.addEventListener('submit', async (event) => {
 });
 window.addEventListener('hashchange', () => {
   closeDialog();
-  render();
+  render().catch(report);
 });
 window.addEventListener('storage', (event) => {
   if (event.key === 'help-family-theme') {
     theme = event.newValue === 'dark' ? 'dark' : 'light';
     applyTheme();
-    render();
+    render().catch(report);
   }
 });
 setInterval(() => {
-  if (currentPage() === 'today' && !document.querySelector('dialog')) render();
+  if (currentPage() === 'today' && !document.querySelector('dialog')) render().catch(report);
 }, 60000);
 try {
-  state = await loadState();
-  ui.memberId = state.members[0]?.id || '';
-  render();
+  await render();
 } catch (error) {
-  document.querySelector('#app').innerHTML = /* HTML */ `<div class="load-error">
-    <h1>help-family</h1>
-    <p>${e(error.message)}</p>
-    <p>Não foi possível acessar o banco local. Recarregue a página para tentar novamente.</p>
-  </div>`;
+  document.querySelector('#app').innerHTML =
+    `<div class="load-error"><h1>help-family</h1><p>${e(error.message)}</p><p>Não foi possível acessar o servidor local. Recarregue para tentar novamente.</p></div>`;
 }

@@ -198,3 +198,23 @@ test('renders an uploaded PDF locally', async ({ page }) => {
     .click();
   await expect(page.locator('.document-preview canvas')).toBeVisible();
 });
+
+test('clinical pages request server HTML and show backend form validation', async ({ page }) => {
+  const calls = [];
+  page.on('request', (request) => calls.push(new URL(request.url()).pathname));
+  await page.goto('/#family');
+  await expect(page.locator('.family-page')).toBeVisible();
+  await page.getByRole('button', { name: 'Adicionar Familiar', exact: true }).click();
+  await expect(page.locator('form[data-form]')).toHaveAttribute('novalidate', '');
+  const rejected = page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/actions/forms/member') &&
+      response.request().method() === 'POST',
+  );
+  await page.getByRole('button', { name: 'Salvar', exact: true }).click();
+  expect((await rejected).status()).toBe(422);
+  await expect(page.getByRole('alert')).toContainText('Dados inválidos');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  expect(calls).toContain('/api/views/family');
+  expect(calls).not.toContain('/api/state');
+});

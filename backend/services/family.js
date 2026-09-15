@@ -30,6 +30,10 @@ export function createFamilyService(db, repository) {
   }
   return {
     snapshot: repository.snapshot,
+    viewSnapshot: repository.viewSnapshot,
+    get(resource, id, options) {
+      return repository.list(resource, { ...options, id })[0];
+    },
     list(resource) {
       return repository.list(resource);
     },
@@ -42,6 +46,15 @@ export function createFamilyService(db, repository) {
       const existing = state[spec.key].find((item) => item.id === id);
       if (method !== 'POST' && !existing) throw new AppError(404, 'Registro não encontrado.');
       let item = { ...existing, ...body, id: existing?.id ?? randomUUID() };
+      if (resource === 'members' && typeof item.name === 'string') {
+        item.name = item.name.trim();
+        item.initials = item.name
+          .split(/\s+/)
+          .slice(0, 2)
+          .map((part) => part[0] || '')
+          .join('')
+          .toUpperCase();
+      }
       // Explicit null clears optional profile fields; omitted fields retain their value.
       if (resource === 'members')
         for (const field of ['photo', 'medicalNotes']) if (body[field] === null) delete item[field];

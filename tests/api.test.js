@@ -10,6 +10,8 @@ import { createDemoState } from '../backend/services/demo-state.js';
 import { openDatabase } from '../backend/database/connection.js';
 import { createVault } from '../backend/services/vault.js';
 import { randomBytes } from 'node:crypto';
+import sharp from 'sharp';
+import { localDate } from '../backend/web/components/ui.js';
 import { decryptLegacy } from '../scripts/migrate-legacy.js';
 
 async function fixture(t, seed = true) {
@@ -208,4 +210,173 @@ test('rejects impossible dates and duplicate times, and clears optional profile 
   );
   assert.equal((await f.request('/members/joao', 'PATCH', { medicalNotes: null }, 2)).status, 200);
   assert.equal((await f.request('/members/joao')).body.item.medicalNotes, undefined);
+});
+
+test('server renders filtered HTML without sending document contents or a client state tree', async (t) => {
+  const f = await fixture(t);
+  const dataUrl = `data:text/plain;base64,${Buffer.from('conteudo-exclusivo-arquivo').toString('base64')}`;
+  const added = await f.request('/documents', 'POST', {
+    memberId: 'joao',
+    title: 'Arquivo isolado',
+    category: 'exam',
+    date: '2026-09-15',
+    fileName: 'arquivo.txt',
+    mimeType: 'text/plain',
+    dataUrl,
+  });
+  assert.equal(added.status, 201);
+  // Uma listagem não deve sequer decifrar os bytes: conteúdo corrompido só afeta sua abertura.
+  f.db
+    .prepare('UPDATE documents SET data_url=? WHERE id=?')
+    .run('conteudo-corrompido', added.body.item.id);
+  const screen = await f.request('/views/documents?documentSearch=Arquivo%20isolado');
+  assert.equal(screen.status, 200);
+  assert.match(screen.body.html, /Arquivo isolado/);
+  assert.equal(screen.body.state, undefined);
+  assert.equal(screen.body.html.includes(dataUrl), false);
+  assert.equal((await f.request(`/file-info/${added.body.item.id}`)).status, 200);
+  assert.equal((await f.request('/views/unknown')).status, 404);
+});
+
+test('raw form inputs are validated and normalized by the backend even without browser validation', async (t) => {
+  const f = await fixture(t);
+  const initial = f.repository.snapshot().state;
+  const member = await f.request('/actions/forms/member', 'POST', {
+    name: '  Pessoa Servidor  ',
+    relationship: 'Irmã',
+    color: '#016b54',
+    medicalNotes: '',
+  });
+  assert.equal(member.status, 200);
+  const stored = f.service.list('members').find((m) => m.name === 'Pessoa Servidor');
+  assert.equal(stored.initials, 'PS');
+  const invalid = await f.request(
+    '/actions/forms/member',
+    'POST',
+    { name: '', relationship: '', color: '#016b54' },
+    2,
+  );
+  assert.equal(invalid.status, 422);
+  assert.equal(
+    (
+      await f.request(
+        '/actions/forms/member',
+        'POST',
+        { name: 'Outro', relationship: 'Irmã', color: '#016b54', initials: 'FORJADO' },
+        2,
+      )
+    ).status,
+    422,
+  );
+  const routine = initial.routines[0];
+  const form = {
+    memberId: routine.memberId,
+    drugId: routine.drugId,
+    presentationId: routine.presentationId,
+    quantity: '1',
+    times: '08:00, 08:00',
+    instruction: '',
+  };
+  assert.equal((await f.request('/actions/forms/routine', 'POST', form, 2)).status, 422);
+  form.times = '20:00, 08:00';
+  assert.equal((await f.request('/actions/forms/routine', 'POST', form, 2)).status, 200);
+  const created = f.service.list('routines').at(-1);
+  assert.deepEqual(created.times, ['08:00', '20:00']);
+  assert.equal(created.instruction, 'Conforme orientação médica');
+});
+
+test('dose commands derive person and time on the server and reject forged context or inactive routines', async (t) => {
+  const f = await fixture(t);
+  const routine = f.service.list('routines')[0];
+  const command = { routineId: routine.id, scheduledTime: routine.times[0], status: 'taken' };
+  assert.equal(
+    (await f.request('/actions/doses', 'POST', { ...command, memberId: 'outra-pessoa' })).status,
+    422,
+  );
+  assert.equal(
+    (await f.request('/actions/doses', 'POST', { ...command, date: '2000-01-01' })).status,
+    422,
+  );
+  assert.equal(
+    (await f.request('/actions/doses', 'POST', { ...command, scheduledTime: '03:17' })).status,
+    422,
+  );
+  const result = await f.request('/actions/doses', 'POST', command);
+  assert.equal(result.status, 200);
+  assert.equal(result.body.item.memberId, routine.memberId);
+  assert.equal(result.body.item.date, localDate());
+  assert.match(result.body.item.recordedAt, /^\d{2}:\d{2}$/);
+  assert.equal(
+    (await f.request(`/actions/routines/${routine.id}/toggle`, 'POST', {}, 2)).status,
+    200,
+  );
+  assert.equal((await f.request('/actions/doses', 'POST', command, 3)).status, 422);
+  assert.equal(
+    (await f.request(`/actions/routines/${routine.id}/toggle`, 'POST', {}, 2)).status,
+    409,
+  );
+});
+
+test('server validates actual upload bytes and sizes and processes photos', async (t) => {
+  const f = await fixture(t);
+  const document = {
+    memberId: 'joao',
+    title: 'Teste arquivo',
+    category: 'exam',
+    date: '2026-09-15',
+    fileName: 'arquivo.pdf',
+    mimeType: 'application/pdf',
+    fileSize: 1,
+    dataUrl: `data:application/pdf;base64,${Buffer.from('nao e PDF').toString('base64')}`,
+  };
+  assert.equal((await f.request('/documents', 'POST', document)).status, 422);
+  const large = {
+    ...document,
+    mimeType: 'text/plain',
+    fileName: 'arquivo.txt',
+    dataUrl: `data:text/plain;base64,${Buffer.alloc(1_000_001, 65).toString('base64')}`,
+  };
+  assert.equal((await f.request('/documents', 'POST', large)).status, 422);
+  const valid = {
+    ...large,
+    dataUrl: `data:text/plain;base64,${Buffer.from('arquivo seguro').toString('base64')}`,
+  };
+  const added = await f.request('/documents', 'POST', valid);
+  assert.equal(added.status, 201);
+  assert.equal(added.body.item.fileSize, Buffer.byteLength('arquivo seguro'));
+  const response = await fetch(`${f.base}/api/files/${added.body.item.id}?download=1`);
+  assert.match(response.headers.get('content-disposition'), /attachment/);
+  assert.equal(await response.text(), 'arquivo seguro');
+  const image = await sharp({
+    create: { width: 80, height: 120, channels: 3, background: '#016b54' },
+  })
+    .png()
+    .toBuffer();
+  const photo = await f.request(
+    '/actions/forms/member?id=joao',
+    'POST',
+    {
+      name: 'João',
+      relationship: 'Pai',
+      color: '#016b54',
+      photoFile: {
+        name: 'foto.png',
+        type: 'image/png',
+        dataUrl: `data:image/png;base64,${image.toString('base64')}`,
+      },
+    },
+    2,
+  );
+  assert.equal(photo.status, 200);
+  const encoded = f.service.get('members', 'joao').photo;
+  const metadata = await sharp(Buffer.from(encoded.split(',')[1], 'base64')).metadata();
+  assert.equal(metadata.width, 640);
+  assert.equal(metadata.height, 640);
+  assert.equal(metadata.format, 'jpeg');
+  assert.equal(metadata.exif, undefined);
+  assert.equal(
+    (await f.request('/members/joao', 'PATCH', { photo: 'data:image/png;base64,SGVsbG8=' }, 3))
+      .status,
+    422,
+  );
 });

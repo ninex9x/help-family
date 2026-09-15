@@ -1,0 +1,329 @@
+/* Extensões das telas SSR. Layout, cartões e paleta vêm dos estilos comuns do painel. */
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter-500.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: Inter;
+  src: url('/assets/inter-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  src: url('/assets/icons.woff2') format('woff2');
+  font-display: block;
+}
+.public-access {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+.access-brand {
+  padding: 36px 20px 24px;
+  text-align: center;
+}
+.access-brand .brand-block {
+  margin: 0 auto;
+  text-align: center;
+}
+.public-access-main {
+  width: min(100%, 480px);
+  margin: auto;
+  padding: 12px 20px 24px;
+}
+.access-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.account-access-card {
+  display: grid;
+  gap: 24px;
+  padding: 28px;
+  background: var(--surface);
+  border: 1px solid var(--soft-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+.access-heading h1 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.3;
+}
+.access-heading p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.account-access-card:hover,
+.family-detail:hover {
+  transform: none;
+}
+.account-avatar {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--secondary-container);
+  color: var(--secondary);
+}
+.account-avatar .material-symbols-outlined {
+  font-size: 28px;
+}
+.account-family-card:nth-child(even) .account-avatar {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.account-form {
+  display: grid;
+  gap: 22px;
+  position: relative;
+}
+.account-form .form-fields {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+}
+.account-form .form-fields label {
+  min-width: 0;
+  gap: 8px;
+  font-size: 16px;
+}
+.account-form input {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  border-radius: 12px;
+  background: var(--background);
+  font-size: 16px;
+}
+.account-form footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--soft-border);
+}
+.account-form .primary-button,
+.account-form .secondary-button {
+  min-height: 48px;
+  justify-content: center;
+  padding-inline: 24px;
+  font-size: 16px;
+}
+.account-access-card .account-form .primary-button {
+  width: 100%;
+}
+.account-form .form-hint {
+  margin: -8px 0 0;
+}
+.account-form .form-error {
+  margin: 0;
+}
+.access-switch {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.access-switch a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.account-create-link {
+  min-height: 56px;
+  padding-inline: 24px;
+  justify-content: center;
+  background: var(--secondary-action);
+}
+.account-family-card {
+  color: var(--text);
+  text-decoration: none;
+}
+.account-family-description {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.account-family-card .family-card-link {
+  position: relative;
+  margin-top: auto;
+}
+.accounts-grid {
+  align-items: start;
+}
+.account-family-card .family-card-person h2 {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.new-family-card {
+  scroll-margin-top: 88px;
+}
+.new-family-card h2 {
+  margin: 0;
+  font-size: 16px;
+}
+.new-family-card .account-form {
+  width: 100%;
+  margin-top: 16px;
+  text-align: left;
+}
+.account-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  padding: 12px 0;
+  font-size: 14px;
+}
+.account-identity span:last-child {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.account-logout {
+  padding: 0 15px;
+  width: 100%;
+}
+.account-access-link {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+.family-detail {
+  max-width: 640px;
+  gap: 24px;
+}
+.accounts-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.family-page-heading h1 {
+  overflow-wrap: anywhere;
+}
+.accounts-body .app-disclaimer {
+  font-size: 12px;
+}
+@media (max-width: 767px) {
+  .accounts-body .app-canvas {
+    padding-bottom: 0;
+  }
+  .access-brand {
+    padding-top: 24px;
+  }
+  .account-access-card {
+    padding: 24px 20px;
+  }
+  .account-create-link {
+    width: 100%;
+  }
+  .account-form footer > * {
+    flex: 1;
+    min-width: 0;
+    padding-inline: 12px;
+  }
+  .account-logout {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+  .family-detail .family-card-person h2 {
+    white-space: normal;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .accounts-body .account-avatar {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --primary: var(--theme-dark-primary);
+    --primary-action: var(--theme-dark-primary-action);
+    --primary-dark: var(--theme-dark-primary-dark);
+    --primary-container: var(--theme-dark-primary-container);
+    --primary-soft: var(--theme-dark-primary-soft);
+    --on-primary-container: var(--theme-dark-on-primary-container);
+    --secondary: var(--theme-dark-secondary);
+    --secondary-action: var(--theme-dark-secondary-action);
+    --secondary-container: var(--theme-dark-secondary-container);
+    --on-secondary-container: var(--theme-dark-on-secondary-container);
+    --tertiary: var(--theme-dark-tertiary);
+    --info-container: var(--theme-dark-info-container);
+    --info-container-hover: var(--theme-dark-info-container-hover);
+    --on-info-container: var(--theme-dark-on-info-container);
+    --on-info-strong: var(--theme-dark-on-info-strong);
+    --background: var(--theme-dark-background);
+    --surface: var(--theme-dark-surface);
+    --surface-low: var(--theme-dark-surface-low);
+    --surface-mid: var(--theme-dark-surface-mid);
+    --surface-high: var(--theme-dark-surface-high);
+    --surface-highest: var(--theme-dark-surface-highest);
+    --glass-surface: var(--theme-dark-glass-surface);
+    --glass-border: var(--theme-dark-glass-border);
+    --topbar: var(--theme-dark-topbar);
+    --text: var(--theme-dark-text);
+    --muted: var(--theme-dark-muted);
+    --outline: var(--theme-dark-outline);
+    --soft-border: var(--theme-dark-soft-border);
+    --placeholder: var(--theme-dark-placeholder);
+    --error: var(--theme-dark-error);
+    --error-container: var(--theme-dark-error-container);
+    --on-error-container: var(--theme-dark-on-error-container);
+    --on-error-action: var(--theme-dark-on-error-action);
+    --success-surface: var(--theme-dark-success-surface);
+    --skipped-container: var(--theme-dark-skipped-container);
+    --on-skipped-container: var(--theme-dark-on-skipped-container);
+    --warning-container: var(--theme-dark-warning-container);
+    --on-warning-container: var(--theme-dark-on-warning-container);
+    --focus-ring: var(--theme-dark-focus-ring);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .accounts-body .family-profile-card {
+    border-color: var(--outline);
+    box-shadow: none;
+  }
+  .accounts-body .family-card-decoration,
+  .accounts-body .family-profile-card:nth-child(even) .family-card-decoration {
+    background: var(--primary-soft);
+  }
+  .accounts-body .account-create-link {
+    background: var(--primary-action);
+  }
+  .accounts-body .family-documents-button {
+    background: var(--surface-high);
+    color: var(--text);
+  }
+  .accounts-body .family-add-card {
+    background: var(--surface-low);
+  }
+}

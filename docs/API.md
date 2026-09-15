@@ -3,6 +3,29 @@
 Base: `http://127.0.0.1:3001/api`. JSON UTF-8. Respostas não são armazenadas em
 cache. O servidor valida origem e Host e atende somente conexões locais.
 
+Este é o contrato clínico SQLite. As contas/famílias PostgreSQL e suas telas em
+localhost:3002 estão documentadas em [ACCOUNTS.md](ACCOUNTS.md).
+
+## HTML e comandos utilizados pelo site
+
+| Método | Caminho                           | Resultado                                                                                                 |
+| ------ | --------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| GET    | `/views/:page`                    | `{ html, revision }`; páginas `today`, `family`, `medicines`, `history`, `documents`                      |
+| GET    | `/forms/:kind`                    | `{ title, html, kind, revision, notice? }`; tipos `member`, `drug`, `presentation`, `routine`, `document` |
+| GET    | `/forms/presentations?drugId=...` | Opções HTML do medicamento solicitado                                                                     |
+| POST   | `/actions/forms/:kind?id=...`     | Campos crus e arquivos; `id` somente ao editar; retorna `{ revision }`                                    |
+| POST   | `/actions/doses`                  | `{ routineId, scheduledTime, status }`; servidor define familiar, data e hora                             |
+| POST   | `/actions/routines/:id/toggle`    | Corpo `{}`; servidor alterna o estado atual                                                               |
+| GET    | `/file-info/:id`                  | `{ item: { id, title, fileName, mimeType } }`                                                             |
+| GET    | `/files/:id`                      | Bytes do arquivo; `?download=1` força download com nome original                                          |
+
+As telas não chamam `/state`. Cada comando de escrita exige `If-Match`. O
+formulário recebe arquivos em `{ name, type, dataUrl }`; o servidor não confia no
+MIME nem no tamanho declarado. Os filtros visuais vão na query de `/views/:page`:
+`memberId`, `medicineMember`, `historyMember`, `historySearch`, `historyPage`,
+`documentMember`, `documentCategory`, `documentSearch` e `theme`. Eles não alteram
+registros nem concedem permissões. Veja [BACKEND-FIRST.md](BACKEND-FIRST.md).
+
 ## Endpoints
 
 | Método | Caminho           | Resultado                                                   |
@@ -36,6 +59,10 @@ para doses. As URLs públicas usam `medicines` e `dose-logs`.
 Datas têm formato `AAAA-MM-DD`; horários, `HH:mm`. Status da dose: `taken` ou
 `skipped`. Categorias de documento: `prescription`, `exam`, `certificate`.
 Fotos são data URLs JPEG/PNG/WEBP; documentos aceitam também PDF e TXT.
+Iniciais são derivadas do nome no servidor, inclusive se o cliente enviar outro
+valor. Fotos novas são processadas no backend; `fileSize` de documentos com
+conteúdo é recalculado pelos bytes reais. Novos uploads exigem base64 válido e
+verificação de conteúdo. Documentos têm limite de 1 MB e fotos de entrada, 12 MB.
 
 `PATCH /members/{id}` aceita `null` para remover `photo` ou `medicalNotes`.
 Campos omitidos permanecem inalterados. Apagar um familiar com rotinas ou
@@ -78,7 +105,7 @@ rotina/data/horário, evitando duas doses duplicadas.
 | 403    | Conexão, Host ou origem não permitidos                     |
 | 404    | Recurso, registro ou endpoint inexistente                  |
 | 409    | Revisão desatualizada ou conflito de integridade no SQLite |
-| 413    | Corpo acima de 8 MB                                        |
+| 413    | Corpo acima de 17 MiB                                      |
 | 422    | Campos ou relacionamentos inválidos                        |
 | 428    | Revisão não informada ou malformada                        |
 | 500    | Falha interna, sem expor detalhes do banco ou chaves       |
