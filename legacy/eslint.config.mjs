@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // A demonstração gera bundles minificados; valide os fontes, não o resultado do build.
+    "demo-dist/**",
   ]),
 ]);
 
