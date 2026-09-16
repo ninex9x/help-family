@@ -20,7 +20,8 @@ Uma instalação nova começa vazia; a instalação migrada conserva seus regist
 **Contas e famílias:** abra **http://127.0.0.1:3002** após `npm run db:setup` e
 `npm run dev:accounts`. Cadastro, login, famílias, perfis de familiares (incluindo fotos) e catálogo de medicamentos funcionam com
 HTML gerado no servidor, inclusive sem JavaScript. Rotinas e horários por familiar
-também estão integrados, com pausa/reativação. Os cuidados clínicos na porta
+também estão integrados, com pausa/reativação. A agenda permite registrar doses
+tomadas/não tomadas e consultar o histórico por familiar. Os cuidados clínicos na porta
 3001 ainda usam SQLite e não estão vinculados a essas contas. Consulte o
 [guia de contas e PostgreSQL](docs/ACCOUNTS.md) para instalar, executar e testar.
 
@@ -52,6 +53,7 @@ legacy/               Aplicação anterior e Android durante a transição
 - [Arquitetura e responsabilidades](docs/ARCHITECTURE.md)
 - [Frontend de apresentação e regras no backend](docs/BACKEND-FIRST.md)
 - [Contas e PostgreSQL: instalação, endpoints e limites da etapa atual](docs/ACCOUNTS.md)
+- [Agenda e histórico de doses: snapshots e confirmação](docs/DOSES.md)
 - [Rotinas e horários: permissões, API e integridade](docs/ROUTINES.md)
 - [Medicamentos no PostgreSQL: catálogo, apresentações e permissões](docs/MEDICINES.md)
 - [Familiares no PostgreSQL: permissões, fotos e criptografia](docs/MEMBERS.md)

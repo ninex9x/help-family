@@ -15,7 +15,8 @@ geradas pelo servidor e funcionam sem JavaScript. O módulo de
 [familiares](MEMBERS.md) já permite novos cadastros cifrados e fotos, com RLS.
 O [catálogo de medicamentos e apresentações](MEDICINES.md) também usa cifras,
 RLS e vínculo composto entre família e medicamento. As [rotinas diárias](ROUTINES.md) vinculam esses cadastros com horários cifrados e
-versão própria. Nenhum dado do acervo anterior foi importado. As demais seções abaixo descrevem o site atual em
+versão própria. A [agenda e o histórico](DOSES.md) registram doses com snapshots
+criptografados e ocorrência única. Nenhum dado do acervo anterior foi importado. As demais seções abaixo descrevem o site atual em
 localhost:3001: SQLite local, sem autenticação e sem isolamento por família.
 
 ## Organização e responsabilidades

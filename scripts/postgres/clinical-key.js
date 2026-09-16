@@ -10,12 +10,12 @@ export async function ensureClinicalKey(client, path) {
     await client.query('BEGIN');
     try {
       await client.query(
-        'LOCK TABLE members, medicines, medicine_presentations, routines IN SHARE MODE',
+        'LOCK TABLE members, medicines, medicine_presentations, routines, dose_logs IN SHARE MODE',
       );
       if (
         (
           await client.query(
-            'SELECT 1 FROM members UNION ALL SELECT 1 FROM medicines UNION ALL SELECT 1 FROM medicine_presentations UNION ALL SELECT 1 FROM routines LIMIT 1',
+            'SELECT 1 FROM members UNION ALL SELECT 1 FROM medicines UNION ALL SELECT 1 FROM medicine_presentations UNION ALL SELECT 1 FROM routines UNION ALL SELECT 1 FROM dose_logs LIMIT 1',
           )
         ).rowCount
       )

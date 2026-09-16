@@ -1,8 +1,8 @@
 /** Dados exclusivamente fictícios no banco descartável da suíte. */
 import assert from 'node:assert/strict';
 import { fixture } from './fixture.js';
-export async function routineFixture(t) {
-  const f = await fixture(t),
+export async function routineFixture(t, options) {
+  const f = await fixture(t, options),
     alice = await f.register('routine-alice'),
     bob = await f.register('routine-bob');
   const family = (await f.request('/families', { account: alice })).body.items[0];

@@ -19,7 +19,8 @@ As duas aplicações executam exclusivamente em localhost.
 | Familiares acompanhados no PostgreSQL                              | Cadastro, consulta, edição e fotos implementados; veja [Familiares](MEMBERS.md)             |
 | Medicamentos e apresentações no PostgreSQL                         | Cadastro, consulta e edição implementados; veja [Medicamentos](MEDICINES.md)                |
 | Rotinas e horários no PostgreSQL                                   | Cadastro, edição, pausa e reativação implementados; veja [Rotinas](ROUTINES.md)             |
-| Registro de doses e documentos no PostgreSQL                       | Ainda não migrados; continuam funcionando no site SQLite                                    |
+| Agenda e histórico de doses no PostgreSQL                          | Implementados por família; veja [Doses](DOSES.md)                                           |
+| Documentos no PostgreSQL                                           | Ainda não migrados; continuam funcionando no site SQLite                                    |
 | Recuperação/troca de senha, verificação de e-mail, MFA e auditoria | Pendentes                                                                                   |
 | Importação do SQLite para uma conta escolhida                      | Pendente; cadastro nunca assume os dados antigos                                            |
 
@@ -115,6 +116,7 @@ backend/
     migrations/002_members.sql  Familiares cifrados e políticas por família
     migrations/003_medicines.sql Catálogo e apresentações por família
     migrations/004_routines.sql  Rotinas e vínculos clínicos compostos
+    migrations/005_doses.sql     Histórico imutável e ocorrência única
   middleware/
     local-access.js             Host, origem, loopback e tipo de conteúdo
     session.js                  Cookie, autenticação e CSRF
@@ -124,6 +126,7 @@ backend/
     members/                    Perfis acompanhados, fotos e isolamento clínico
     medicines/                  Medicamentos e apresentações por família
     routines/                   Rotinas diárias e horários por familiar
+    doses/                      Agenda, confirmação e histórico por família
   web/accounts/                 Templates HTML e formulários processados pelo servidor
   shared/
     errors.js                   Respostas sem detalhes internos de SQL/segredos
@@ -223,7 +226,7 @@ de autenticação são compartilhados entre formulários HTML e API JSON.
   no máximo 5.000 chaves em memória e reinicia com o processo. Como o uso é local,
   contas diferentes podem compartilhar o limite do mesmo endereço.
 - RLS protege `families`, `family_memberships`, `members`, `medicines` e
-  `medicine_presentations` e `routines`. Cada operação configura o usuário
+  `medicine_presentations`, `routines` e `dose_logs`. Cada operação configura o usuário
   apenas dentro da transação e usa o mesmo cliente até commit/rollback. Consultas
   também filtram o vínculo explicitamente. Sem contexto não há leitura de famílias.
 - O papel da API não cria vínculos diretamente. Uma função `SECURITY DEFINER`, com
@@ -273,7 +276,7 @@ versionados nem substitui a revisão do conteúdo.
 
 ## Próxima entrega
 
-Com familiares, medicamentos e rotinas implementados, avançar para registro de doses e
+Com familiares, medicamentos, rotinas e doses implementados, avançar para
 documentos nas famílias autenticadas, preservando os templates
 gerados no servidor e o design existente, com
 escopo obrigatório de família e testes de autorização. Dados antigos só poderão

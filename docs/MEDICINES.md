@@ -7,8 +7,8 @@ uma apresentação abre sua edição. As telas são geradas pelo backend e funci
 com JavaScript desativado, preservando cartões, paleta e tipografia do site.
 
 Esta etapa entrega o catálogo. A integração com familiares e horários já está
-disponível em [Rotinas](ROUTINES.md). Registrar doses e integrar documentos são
-etapas seguintes.
+disponível em [Rotinas](ROUTINES.md). A [agenda e o histórico de doses](DOSES.md) também estão integrados;
+os documentos continuam como próxima etapa.
 O catálogo não calcula doses nem recomenda tratamentos. Não há exclusão ou
 transferência de registros nesta etapa. O site SQLite da porta 3001 continua
 independente; nenhum dado antigo é importado automaticamente.

@@ -16,16 +16,17 @@ informados pelo usuário; o sistema não recomenda tratamentos nem converte dose
 - Proprietário/cuidador cadastram, editam, pausam e reativam; leitor consulta.
 - Telas e erros em HTML no servidor, inclusive com JavaScript desativado.
 
-Ainda não há registro de doses, lembretes, alarmes, dias da semana, intervalo de
+A [agenda e o histórico de doses](DOSES.md) já estão integrados.
+Ainda não há lembretes, alarmes, dias da semana, intervalo de
 datas, recorrência por intervalo ou conversão de fuso. Os horários são valores de
-relógio, sem data/fuso associado; a agenda de doses deverá definir sua regra de
-fuso explicitamente. Pausar preserva os dados e marca a rotina como inativa.
+relógio, sem data/fuso associado na rotina; a agenda de doses aplica
+explicitamente o fuso America/Sao_Paulo. Pausar preserva os dados e marca a rotina como inativa.
 Não existe um agendador em segundo plano nesta entrega.
 
 Os vínculos com familiar, medicamento e apresentação são fixos. Para trocar esses
 vínculos, pause a rotina anterior e crie outra. Isso prepara a integridade do
 histórico de doses. Nomes/concentrações exibidos vêm dos cadastros atuais; snapshots
-históricos serão tratados na etapa de registro de doses. Editar esses cadastros
+históricos são preservados na etapa de [registro de doses](DOSES.md). Editar esses cadastros
 não altera a versão da rotina.
 
 ## Pastas e responsabilidades
@@ -137,5 +138,5 @@ chaves, credenciais e capturas reais continuam fora do Git.
 RLS, permissões, revogação, CSRF/origem, cifras trocadas, quota concorrente e conflitos.
 O navegador testa criar/editar/pausar/reativar sem JavaScript, pré-requisitos,
 leitor, versão antiga, escapes e cartões em celular/tablet. Os testes usam bancos
-descartáveis e dados fictícios. Próxima etapa: agenda e registro de doses, com
-histórico consistente por familiar e família.
+descartáveis e dados fictícios. A agenda e o registro de doses já estão integrados;
+consulte [Doses](DOSES.md) para o comportamento e os limites atuais.

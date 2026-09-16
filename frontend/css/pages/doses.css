@@ -1,0 +1,137 @@
+/* Complementos SSR para agenda e histórico, reutilizando cartões do catálogo e de rotinas. */
+/* O foco nos campos deve revelar imediatamente os controles da confirmação. */
+html:has(.dose-form:focus-within) {
+  scroll-behavior: auto;
+}
+.dose-card {
+  gap: 12px;
+}
+/* O cartão contém formulário: não movê-lo ao focar/clicar nos controles. */
+.dose-card:hover {
+  transform: none;
+}
+.dose-card .medication-card-header {
+  margin-bottom: 0;
+}
+.dose-card .medication-card-person p {
+  overflow-wrap: anywhere;
+}
+.dose-card .medication-feature-icon {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+.dose-status {
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  background: var(--surface-high);
+}
+.dose-taken {
+  background: var(--secondary-container);
+  color: var(--secondary);
+}
+.dose-skipped {
+  background: var(--warning-container);
+  color: var(--text);
+}
+.dose-time {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  font-weight: 600;
+}
+.dose-recorded {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 0;
+}
+.dose-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 0;
+  padding: 12px;
+  background: var(--surface-low);
+  border-radius: 12px;
+}
+.dose-form {
+  margin-top: auto;
+  padding-top: 12px;
+  gap: 12px;
+}
+.dose-form summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--muted);
+}
+.dose-form details label {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dose-form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--soft-border);
+  border-radius: 12px;
+  padding: 12px;
+  font: inherit;
+  background: var(--background);
+  color: var(--text);
+  resize: vertical;
+}
+.dose-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dose-actions .primary-button,
+.dose-actions .secondary-button {
+  padding: 8px;
+  font-size: 13px;
+  min-width: 0;
+}
+.dose-filters {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 18px;
+  background: var(--surface);
+  border: 1px solid var(--soft-border);
+  border-radius: 16px;
+}
+.dose-filters label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 180px;
+}
+.dose-filters input,
+.dose-filters select {
+  max-width: 100%;
+}
+.dose-filters button {
+  min-height: 56px;
+}
+.dose-summary {
+  color: var(--muted);
+  margin: 20px 0;
+}
+.dose-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+}
+@media (max-width: 767px) {
+  .dose-filters label,
+  .dose-filters button {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}

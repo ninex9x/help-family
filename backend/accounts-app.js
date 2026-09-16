@@ -16,7 +16,9 @@ import { createMedicinesService } from './modules/medicines/service.js';
 import { medicineRoutes } from './modules/medicines/routes.js';
 import { createRoutinesService } from './modules/routines/service.js';
 import { routineRoutes } from './modules/routines/routes.js';
-export async function createAccountsApp(database, { attempts, clinicalKey } = {}) {
+import { createDosesService } from './modules/doses/service.js';
+import { doseRoutes } from './modules/doses/routes.js';
+export async function createAccountsApp(database, { attempts, clinicalKey, doseClock } = {}) {
   const pool = await openPool(database);
   try {
     const auth = createAuthService(pool, await createPasswords());
@@ -24,6 +26,7 @@ export async function createAccountsApp(database, { attempts, clinicalKey } = {}
     const members = createMembersService(pool, clinicalKey);
     const medicines = createMedicinesService(pool, clinicalKey);
     const routines = createRoutinesService(pool, clinicalKey);
+    const doses = createDosesService(pool, clinicalKey, doseClock);
     const app = express();
     app.disable('x-powered-by');
     app.use(
@@ -41,7 +44,8 @@ export async function createAccountsApp(database, { attempts, clinicalKey } = {}
     app.use('/api/families/:familyId/members', memberRoutes(members, auth));
     app.use('/api/families/:familyId/medicines', medicineRoutes(medicines, auth));
     app.use('/api/families/:familyId/routines', routineRoutes(routines, auth));
-    app.use(accountWebRoutes(auth, families, attemptLimiter, members, medicines, routines));
+    app.use('/api/families/:familyId/doses', doseRoutes(doses, auth));
+    app.use(accountWebRoutes(auth, families, attemptLimiter, members, medicines, routines, doses));
     app.use((_req, _res, next) => next(new HttpError(404, 'Endpoint não encontrado.')));
     app.use(errorResponse);
     return { app, pool };

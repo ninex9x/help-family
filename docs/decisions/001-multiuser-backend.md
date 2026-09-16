@@ -2,10 +2,10 @@
 
 Status: arquitetura-alvo em implementação na aplicação localhost:3002. Já foram
 entregues contas, sessões, famílias, familiares com fotos e catálogo de medicamentos
-com apresentações, rotinas e horários, PostgreSQL/RLS e telas HTML no servidor. Consulte
+com apresentações, rotinas, agenda e histórico de doses, PostgreSQL/RLS e telas HTML no servidor. Consulte
 [Contas](../ACCOUNTS.md), [Familiares](../MEMBERS.md) e
-[Medicamentos](../MEDICINES.md) e [Rotinas](../ROUTINES.md) para o escopo efetivo. O site anterior em
-localhost:3001 ainda usa SQLite, sem login. Registro de doses, documentos, convites,
+[Medicamentos](../MEDICINES.md) e [Rotinas](../ROUTINES.md) e [Doses](../DOSES.md) para o escopo efetivo. O site anterior em
+localhost:3001 ainda usa SQLite, sem login. Documentos, convites,
 importação e outros itens abaixo continuam como plano de evolução.
 
 ## Objetivo e limites

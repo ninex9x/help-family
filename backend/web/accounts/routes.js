@@ -9,8 +9,9 @@ import { authPage, familiesPage, familyPage, errorPage } from './templates.js';
 import { memberWebRoutes } from './members.js';
 import { medicineWebRoutes } from './medicines/routes.js';
 import { routineWebRoutes } from './routines/routes.js';
+import { doseWebRoutes } from './doses/routes.js';
 const asset = (path) => fileURLToPath(new URL(`../../../${path}`, import.meta.url));
-export function accountWebRoutes(auth, families, attempts, members, medicines, routines) {
+export function accountWebRoutes(auth, families, attempts, members, medicines, routines, doses) {
   const router = Router();
   router.use((req, res, next) => {
     if (req.path.startsWith('/api/')) return next('router');
@@ -34,6 +35,7 @@ export function accountWebRoutes(auth, families, attempts, members, medicines, r
     '/assets/medicines.css': 'frontend/css/pages/medicines.css',
     '/assets/catalog.css': 'frontend/css/pages/catalog.css',
     '/assets/routines.css': 'frontend/css/pages/routines.css',
+    '/assets/doses.css': 'frontend/css/pages/doses.css',
     '/assets/inter.woff2': 'node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2',
     '/assets/inter-500.woff2': 'node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2',
     '/assets/inter-600.woff2': 'node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2',
@@ -122,6 +124,7 @@ export function accountWebRoutes(auth, families, attempts, members, medicines, r
   router.use('/families/:familyId/members', memberWebRoutes(members));
   router.use('/families/:familyId/medicines', medicineWebRoutes(medicines));
   router.use('/families/:familyId/routines', routineWebRoutes(routines, members, medicines));
+  router.use('/families/:familyId/doses', doseWebRoutes(doses, members));
   router.use((_req, _res, next) => next(new HttpError(404, 'Página não encontrada.')));
   router.use((error, _req, res, _next) => {
     const status = error instanceof HttpError ? error.status : 500;

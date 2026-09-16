@@ -15,7 +15,8 @@ acesso ao sistema. Uma conta pode ter vínculos com várias famílias.
 
 O [catálogo de medicamentos e apresentações](MEDICINES.md) já foi integrado.
 As [rotinas e horários por familiar](ROUTINES.md) também estão integradas.
-Excluir/transferir perfis, convidar usuários, registro de doses e
+A [agenda e o histórico de doses](DOSES.md) já estão disponíveis.
+Excluir/transferir perfis, convidar usuários e
 documentos ainda não fazem parte desta entrega. Os vínculos de cuidador/leitor
 existem no modelo e são exercitados em bancos descartáveis pelos testes; ainda
 não há uma tela para compartilhar a família. O site SQLite da porta 3001 continua

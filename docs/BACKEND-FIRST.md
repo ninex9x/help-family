@@ -93,7 +93,7 @@ validação de estado e planejamento de compatibilidade dos arquivos antigos.
 ## Contas sem JavaScript
 
 Em **localhost:3002**, cadastro, login, seleção/criação/edição de famílias,
-cadastro/edição de familiares com foto, medicamentos/apresentações, rotinas/horários e logout
+cadastro/edição de familiares com foto, medicamentos/apresentações, rotinas/horários, agenda/histórico de doses e logout
 usam HTML completo e formulários HTTP convencionais. As rotas chamam os mesmos
 serviços e validadores da API JSON. Não existe validação ou permissão implementada
 em um script de login.
