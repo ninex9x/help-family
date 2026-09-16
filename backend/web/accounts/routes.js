@@ -6,8 +6,11 @@ import { familyInput, familyId, version } from '../../modules/families/validatio
 import { readSessionCookie, setSessionCookie, validateCsrf } from '../../middleware/session.js';
 import { HttpError } from '../../shared/errors.js';
 import { authPage, familiesPage, familyPage, errorPage } from './templates.js';
+import { memberWebRoutes } from './members.js';
+import { medicineWebRoutes } from './medicines/routes.js';
+import { routineWebRoutes } from './routines/routes.js';
 const asset = (path) => fileURLToPath(new URL(`../../../${path}`, import.meta.url));
-export function accountWebRoutes(auth, families, attempts) {
+export function accountWebRoutes(auth, families, attempts, members, medicines, routines) {
   const router = Router();
   router.use((req, res, next) => {
     if (req.path.startsWith('/api/')) return next('router');
@@ -16,7 +19,7 @@ export function accountWebRoutes(auth, families, attempts) {
     res.set('Referrer-Policy', 'same-origin');
     res.set(
       'Content-Security-Policy',
-      "default-src 'none'; style-src 'self'; font-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
+      "default-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'",
     );
     next();
   });
@@ -27,6 +30,10 @@ export function accountWebRoutes(auth, families, attempts) {
     '/assets/family.css': 'frontend/css/pages/family.css',
     '/assets/components.css': 'frontend/css/components.css',
     '/assets/accounts.css': 'frontend/css/pages/accounts.css',
+    '/assets/members.css': 'frontend/css/pages/members.css',
+    '/assets/medicines.css': 'frontend/css/pages/medicines.css',
+    '/assets/catalog.css': 'frontend/css/pages/catalog.css',
+    '/assets/routines.css': 'frontend/css/pages/routines.css',
     '/assets/inter.woff2': 'node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2',
     '/assets/inter-500.woff2': 'node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2',
     '/assets/inter-600.woff2': 'node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2',
@@ -112,6 +119,9 @@ export function accountWebRoutes(auth, families, attempts) {
         .send(familyPage(req.auth, await families.get(req.auth.user.id, id), error.message));
     }
   });
+  router.use('/families/:familyId/members', memberWebRoutes(members));
+  router.use('/families/:familyId/medicines', medicineWebRoutes(medicines));
+  router.use('/families/:familyId/routines', routineWebRoutes(routines, members, medicines));
   router.use((_req, _res, next) => next(new HttpError(404, 'Página não encontrada.')));
   router.use((error, _req, res, _next) => {
     const status = error instanceof HttpError ? error.status : 500;

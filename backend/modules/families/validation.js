@@ -8,7 +8,7 @@ export function familyInput(body) {
 export function familyId(value) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value))
     throw new HttpError(404, 'Família não encontrada.');
-  return value;
+  return value.toLowerCase();
 }
 export function version(value) {
   if (typeof value !== 'string' || !/^(?:[1-9]\d*|"[1-9]\d*")$/.test(value))

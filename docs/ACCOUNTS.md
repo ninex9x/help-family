@@ -3,27 +3,31 @@
 Esta etapa implementa cadastro, login, logout, sessões e famílias privadas em uma
 API PostgreSQL separada. **O site em `http://127.0.0.1:3001` ainda usa SQLite e não
 exige login.** A aplicação nova em `http://127.0.0.1:3002` oferece telas de cadastro,
-login e seleção de família geradas pelo servidor. Não lê os dados clínicos anteriores.
+login, famílias, familiares e catálogo de medicamentos gerados pelo servidor. Não lê os dados clínicos anteriores.
 As duas aplicações executam exclusivamente em localhost.
 
 ## O que funciona e o que vem depois
 
-| Recurso                                                                  | Situação                                                                                    |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Conta individual, senha e sessão revogável                               | Implementado na API nova                                                                    |
-| Criar, listar, consultar e renomear famílias                             | Implementado, com autorização e versão por família                                          |
-| Uma conta participar de várias famílias                                  | Modelo implementado; a API permite criar famílias próprias                                  |
-| Papel de proprietário, cuidador e leitor                                 | Modelo implementado; leitura por vínculo e edição do nome pelo proprietário                 |
-| Compartilhar uma família com outra conta                                 | Ainda sem endpoint ou tela de convite; vínculos compartilhados são exercitados pelos testes |
-| Tela de cadastro/login e seletor de família                              | Implementado em HTML gerado no servidor, sem depender de JavaScript                         |
-| Familiares acompanhados, medicamentos, agenda e documentos em PostgreSQL | Ainda não migrados; continuam funcionando no site SQLite                                    |
-| Recuperação/troca de senha, verificação de e-mail, MFA e auditoria       | Pendentes                                                                                   |
-| Importação do SQLite para uma conta escolhida                            | Pendente; cadastro nunca assume os dados antigos                                            |
+| Recurso                                                            | Situação                                                                                    |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Conta individual, senha e sessão revogável                         | Implementado na API nova                                                                    |
+| Criar, listar, consultar e renomear famílias                       | Implementado, com autorização e versão por família                                          |
+| Uma conta participar de várias famílias                            | Modelo implementado; a API permite criar famílias próprias                                  |
+| Papel de proprietário, cuidador e leitor                           | Modelo implementado; leitura por vínculo e edição do nome pelo proprietário                 |
+| Compartilhar uma família com outra conta                           | Ainda sem endpoint ou tela de convite; vínculos compartilhados são exercitados pelos testes |
+| Tela de cadastro/login e seletor de família                        | Implementado em HTML gerado no servidor, sem depender de JavaScript                         |
+| Familiares acompanhados no PostgreSQL                              | Cadastro, consulta, edição e fotos implementados; veja [Familiares](MEMBERS.md)             |
+| Medicamentos e apresentações no PostgreSQL                         | Cadastro, consulta e edição implementados; veja [Medicamentos](MEDICINES.md)                |
+| Rotinas e horários no PostgreSQL                                   | Cadastro, edição, pausa e reativação implementados; veja [Rotinas](ROUTINES.md)             |
+| Registro de doses e documentos no PostgreSQL                       | Ainda não migrados; continuam funcionando no site SQLite                                    |
+| Recuperação/troca de senha, verificação de e-mail, MFA e auditoria | Pendentes                                                                                   |
+| Importação do SQLite para uma conta escolhida                      | Pendente; cadastro nunca assume os dados antigos                                            |
 
 Uma **conta** representa quem acessa o sistema. Uma **família** é um espaço de dados
 compartilhado por vínculos com permissões. Um **familiar acompanhado** é a pessoa
-cujos cuidados são registrados: pode ser uma criança ou alguém sem login. Nesta
-etapa, os familiares acompanhados ainda pertencem ao modelo SQLite anterior.
+cujos cuidados são registrados: pode ser uma criança ou alguém sem login. Novos
+familiares já podem ser cadastrados na família autenticada; os registros antigos
+continuam no SQLite e não são importados automaticamente.
 
 ## Instalação local
 
@@ -108,12 +112,18 @@ backend/
     pool.js                     Papel de execução, pool e contexto por transação
     migrate.js                  Migrações transacionais, checksum e permissões
     migrations/001_accounts.sql Contas, sessões, famílias, vínculos e RLS
+    migrations/002_members.sql  Familiares cifrados e políticas por família
+    migrations/003_medicines.sql Catálogo e apresentações por família
+    migrations/004_routines.sql  Rotinas e vínculos clínicos compostos
   middleware/
     local-access.js             Host, origem, loopback e tipo de conteúdo
     session.js                  Cookie, autenticação e CSRF
   modules/
     auth/                       Rotas, validação, serviço e repositório de contas
     families/                   Rotas, validação, serviço e repositório de famílias
+    members/                    Perfis acompanhados, fotos e isolamento clínico
+    medicines/                  Medicamentos e apresentações por família
+    routines/                   Rotinas diárias e horários por familiar
   web/accounts/                 Templates HTML e formulários processados pelo servidor
   shared/
     errors.js                   Respostas sem detalhes internos de SQL/segredos
@@ -133,7 +143,8 @@ Concessões do papel de execução ficam explícitas no executor de migrações.
 
 ## Contrato HTTP implementado
 
-Base: `http://127.0.0.1:3002/api`. Todos os corpos são JSON, com limite de 16 KiB.
+Base: `http://127.0.0.1:3002/api`. Os corpos JSON têm limite de 16 KiB. A rota específica de foto aceita multipart;
+veja o [contrato de familiares](MEMBERS.md#api-implementada).
 Nomes possuem 1–120 caracteres após remoção de espaços nas extremidades. E-mails
 são normalizados para minúsculas e limitados a 254 caracteres; a validação sintática
 não comprova a titularidade do endereço. Cadastro exige senha de 15–128 caracteres.
@@ -211,7 +222,8 @@ de autenticação são compartilhados entre formulários HTML e API JSON.
   e-mail a cada 15 minutos, inclusive tentativas bem-sucedidas. O controle mantém
   no máximo 5.000 chaves em memória e reinicia com o processo. Como o uso é local,
   contas diferentes podem compartilhar o limite do mesmo endereço.
-- RLS protege `families` e `family_memberships`. Cada operação configura o usuário
+- RLS protege `families`, `family_memberships`, `members`, `medicines` e
+  `medicine_presentations` e `routines`. Cada operação configura o usuário
   apenas dentro da transação e usa o mesmo cliente até commit/rollback. Consultas
   também filtram o vínculo explicitamente. Sem contexto não há leitura de famílias.
 - O papel da API não cria vínculos diretamente. Uma função `SECURITY DEFINER`, com
@@ -220,9 +232,9 @@ de autenticação são compartilhados entre formulários HTML e API JSON.
   migração usa esse papel, nunca as consultas HTTP. RLS não substitui validação,
   autorização e consultas parametrizadas.
 - Nomes de conta/família e e-mails são metadados em texto no PostgreSQL; somente as
-  senhas e os tokens de autenticação têm hash. Não há dados clínicos nesta base.
-  A criptografia clínica existente aplica-se ao SQLite; a migração clínica ainda
-  precisa implementar a política descrita no documento de arquitetura-alvo.
+  senhas e os tokens de autenticação têm hash. Perfis, fotos e catálogo clínico usam
+  AES-256-GCM com chave independente em `data/postgres/clinical.key`. Consulte
+  [criptografia, permissões e recuperação de familiares](MEMBERS.md).
 
 ## Testes e cuidados com o repositório público
 
@@ -261,7 +273,8 @@ versionados nem substitui a revisão do conteúdo.
 
 ## Próxima entrega
 
-Migrar cada recurso clínico para as famílias autenticadas, preservando os templates
+Com familiares, medicamentos e rotinas implementados, avançar para registro de doses e
+documentos nas famílias autenticadas, preservando os templates
 gerados no servidor e o design existente, com
 escopo obrigatório de família e testes de autorização. Dados antigos só poderão
 ser atribuídos a uma conta/família escolhida explicitamente, após backup e ensaio

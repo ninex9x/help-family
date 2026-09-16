@@ -348,6 +348,6 @@ test('runtime refuses migration credentials and migrations can run twice', async
   await migrate(connection(f.settings, 'migration', f.database), f.settings.app.user);
   assert.equal(
     (await f.manager.query('SELECT count(*) FROM schema_migrations')).rows[0].count,
-    '1',
+    '4',
   );
 });

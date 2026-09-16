@@ -18,8 +18,9 @@ O banco e a chave são criados em `data/`, fora do versionamento.
 Uma instalação nova começa vazia; a instalação migrada conserva seus registros.
 
 **Contas e famílias:** abra **http://127.0.0.1:3002** após `npm run db:setup` e
-`npm run dev:accounts`. Cadastro, login, seleção e edição de famílias funcionam com
-HTML gerado no servidor, inclusive sem JavaScript. Os cuidados clínicos na porta
+`npm run dev:accounts`. Cadastro, login, famílias, perfis de familiares (incluindo fotos) e catálogo de medicamentos funcionam com
+HTML gerado no servidor, inclusive sem JavaScript. Rotinas e horários por familiar
+também estão integrados, com pausa/reativação. Os cuidados clínicos na porta
 3001 ainda usam SQLite e não estão vinculados a essas contas. Consulte o
 [guia de contas e PostgreSQL](docs/ACCOUNTS.md) para instalar, executar e testar.
 
@@ -31,13 +32,13 @@ frontend/              HTML, estilos e JavaScript do navegador
   css/                 Temas, layout e componentes
 backend/               Regras, validação, HTML e persistência
   web/pages/           Templates das cinco telas clínicas
-  web/accounts/        Páginas e rotas de cadastro, login e famílias
+  web/accounts/        Telas de contas, famílias, familiares e medicamentos
   web/components/      Formulários e componentes HTML gerados pelo servidor
   routes/              Endpoints HTTP
   services/            Regras, validação e criptografia
   repositories/        Mapeamento e consultas SQL parametrizadas
   database/migrations/ Estrutura versionada do banco
-  modules/             Nova API: autenticação e famílias, separadas por módulo
+  modules/             Nova API: autenticação, famílias, familiares e medicamentos
   database/postgres/   Pool, migrações e isolamento PostgreSQL da API nova
 scripts/               Migração, backup e servidor de testes
 tests/                Testes automatizados da API e do navegador
@@ -51,6 +52,9 @@ legacy/               Aplicação anterior e Android durante a transição
 - [Arquitetura e responsabilidades](docs/ARCHITECTURE.md)
 - [Frontend de apresentação e regras no backend](docs/BACKEND-FIRST.md)
 - [Contas e PostgreSQL: instalação, endpoints e limites da etapa atual](docs/ACCOUNTS.md)
+- [Rotinas e horários: permissões, API e integridade](docs/ROUTINES.md)
+- [Medicamentos no PostgreSQL: catálogo, apresentações e permissões](docs/MEDICINES.md)
+- [Familiares no PostgreSQL: permissões, fotos e criptografia](docs/MEMBERS.md)
 - [Arquitetura-alvo de contas e famílias separadas](docs/decisions/001-multiuser-backend.md)
 - [API, campos e tratamento de erros](docs/API.md)
 - [Migração, testes, backup e recuperação](docs/MIGRATION.md)

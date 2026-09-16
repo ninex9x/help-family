@@ -14,7 +14,7 @@ export async function openPool(config) {
   pool.on('error', () => console.error('Conexão PostgreSQL local interrompida.'));
   try {
     const result = await pool.query(`SELECT r.rolsuper, r.rolbypassrls,
-      EXISTS (SELECT 1 FROM pg_class c WHERE c.relname IN ('families','family_memberships') AND c.relowner=r.oid) AS owns_tables
+      EXISTS (SELECT 1 FROM pg_class c WHERE c.relname IN ('families','family_memberships','members','medicines','medicine_presentations','routines') AND c.relowner=r.oid) AS owns_tables
       FROM pg_roles r WHERE r.rolname=current_user`);
     if (
       !result.rows[0] ||

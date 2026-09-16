@@ -11,6 +11,7 @@ import {
   runPostgres as run,
 } from './local.js';
 import { migrate } from '../../backend/database/postgres/migrate.js';
+import { ensureClinicalKey } from './clinical-key.js';
 process.umask(0o077);
 await mkdir(directory, { recursive: true, mode: 0o700 });
 await chmod(directory, 0o700);
@@ -84,6 +85,13 @@ try {
   await admin.end();
 }
 await migrate(connection(settings, 'migration'), settings.app.user);
+const migration = new Client(connection(settings, 'migration'));
+await migration.connect();
+try {
+  await ensureClinicalKey(migration, `${directory}/clinical.key`);
+} finally {
+  await migration.end();
+}
 console.log(
   'PostgreSQL pronto em 127.0.0.1:55432. Migrações aplicadas; credenciais em data/postgres/ (fora do Git).',
 );

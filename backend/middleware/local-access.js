@@ -21,7 +21,12 @@ export function localAccess(req, res, next) {
     if (req.get('origin') !== url.origin)
       throw new HttpError(403, 'Origem obrigatória e deve corresponder à API local.');
     const htmlForm = !req.path.startsWith('/api/') && req.is('application/x-www-form-urlencoded');
-    if (!req.is('application/json') && !htmlForm)
+    const memberForm =
+      req.method === 'POST' &&
+      req.is('multipart/form-data') &&
+      (/^\/families\/[^/]+\/members(?:\/[^/]+)?$/.test(req.path) ||
+        /^\/api\/families\/[^/]+\/members\/[^/]+\/photo$/.test(req.path));
+    if (!req.is('application/json') && !htmlForm && !memberForm)
       throw new HttpError(415, 'Tipo de conteúdo não permitido.');
   }
   res.set({

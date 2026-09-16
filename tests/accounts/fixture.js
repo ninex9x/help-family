@@ -1,5 +1,5 @@
 /** Cada teste usa banco PostgreSQL descartável. Nunca abrir ou limpar o banco de uso local. */
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { Client } from 'pg';
@@ -26,7 +26,10 @@ export async function fixture(t, options) {
     await admin.end();
   });
   await migrate(connection(settings, 'migration', database), settings.app.user);
-  context = await createAccountsApp(connection(settings, 'app', database), options);
+  context = await createAccountsApp(connection(settings, 'app', database), {
+    clinicalKey: randomBytes(32),
+    ...options,
+  });
   manager = new Client(connection(settings, 'migration', database));
   await manager.connect();
   server = createServer(context.app);

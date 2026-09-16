@@ -35,6 +35,20 @@ export async function migrate(config, runtimeRole) {
     await client.query(`GRANT SELECT, INSERT, UPDATE, DELETE ON sessions TO "${runtimeRole}"`);
     await client.query(`GRANT SELECT, UPDATE ON families TO "${runtimeRole}"`);
     await client.query(`GRANT SELECT ON family_memberships TO "${runtimeRole}"`);
+    await client.query(`GRANT SELECT, INSERT ON routines TO "${runtimeRole}"`);
+    await client.query(
+      `GRANT UPDATE (content_ciphertext, version, updated_at) ON routines TO "${runtimeRole}"`,
+    );
+    await client.query(`GRANT SELECT, INSERT ON members TO "${runtimeRole}"`);
+    await client.query(
+      `GRANT SELECT, INSERT ON medicines, medicine_presentations TO "${runtimeRole}"`,
+    );
+    await client.query(
+      `GRANT UPDATE (content_ciphertext, version, updated_at) ON medicines, medicine_presentations TO "${runtimeRole}"`,
+    );
+    await client.query(
+      `GRANT UPDATE (profile_ciphertext, photo_ciphertext, version, updated_at) ON members TO "${runtimeRole}"`,
+    );
     await client.query(
       `GRANT EXECUTE ON FUNCTION request_user_id(), create_owned_family(text) TO "${runtimeRole}"`,
     );

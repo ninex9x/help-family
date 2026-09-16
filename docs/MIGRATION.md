@@ -11,6 +11,11 @@ As regras de validação foram convertidas para JavaScript e preservadas em
 `backend/services/validation.js`. A identidade visual mantém fontes locais,
 paleta, tema escuro e navegação responsiva, com componentes web reescritos.
 
+A etapa multiusuário está em localhost:3002, com PostgreSQL, contas, famílias e
+[novos cadastros de familiares](MEMBERS.md). Nenhum dado antigo é importado para
+essa base. Os comandos de migração e backup abaixo são exclusivos do SQLite;
+consulte [Contas](ACCOUNTS.md) para iniciar a aplicação PostgreSQL.
+
 ## Iniciar
 
 Na raiz, execute `npm ci` e `npm run dev`. O servidor abre exclusivamente em

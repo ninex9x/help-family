@@ -7,6 +7,12 @@ O frontend atual não importa código de `legacy/` em execução.
 
 ## Organização dos estilos
 
+As telas de contas em localhost:3002 reutilizam esses estilos com complementos em
+`pages/accounts.css`, `pages/members.css`, `pages/catalog.css` e `pages/routines.css`. O catálogo
+reutiliza também `pages/medicines.css`. O login não tem menu lateral. Os
+familiares autenticados mantêm cartões, paleta e tipografia, exibindo somente as
+ações integradas nesta etapa; não simulam doses ou documentos ainda não migrados.
+
 | Arquivo                            | Responsabilidade                                                     |
 | ---------------------------------- | -------------------------------------------------------------------- |
 | `frontend/css/base.css`            | Paleta clara/escura, tipografia, reset e acessibilidade básica       |

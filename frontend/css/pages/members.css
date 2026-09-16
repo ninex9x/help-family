@@ -1,0 +1,74 @@
+/* Complementos SSR; a identidade visual vem dos cartões e formulários já existentes. */
+.member-portrait {
+  object-fit: cover;
+}
+.account-member-card .family-card-person h2 {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.account-member-card .family-card-person p {
+  overflow-wrap: anywhere;
+}
+.account-member-card .family-card-link {
+  position: relative;
+  margin-top: auto;
+}
+.member-note span {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.member-readonly {
+  margin-bottom: 24px;
+}
+.member-form textarea,
+.member-form select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--soft-border);
+  border-radius: 12px;
+  padding: 14px;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+}
+.member-form textarea {
+  resize: vertical;
+}
+.member-form input[type='file'] {
+  padding: 12px;
+}
+.member-form .member-remove-photo {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.member-remove-photo input {
+  width: 20px;
+  min-height: 20px;
+  accent-color: var(--primary);
+}
+.accounts-body .member-color-0 {
+  background: #7c8f69;
+  color: #fff;
+}
+.accounts-body .member-color-1 {
+  background: #6586a3;
+  color: #fff;
+}
+.accounts-body .member-color-2 {
+  background: #b88387;
+  color: #fff;
+}
+.accounts-body .member-color-3 {
+  background: #aa8a58;
+  color: #fff;
+}
+.accounts-body .member-color-4 {
+  background: #9581ac;
+  color: #fff;
+}
+.accounts-body .member-color-5 {
+  background: #4f9188;
+  color: #fff;
+}

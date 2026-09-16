@@ -1,0 +1,62 @@
+/* Complementos dos cartões do catálogo; nenhuma regra de negócio no navegador. */
+.routine-card {
+  gap: 12px;
+}
+.routine-card .medication-card-header {
+  margin-bottom: 0;
+}
+.routine-card .medication-card-person p {
+  overflow-wrap: anywhere;
+}
+.routine-card .medication-feature-icon {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+.routine-status {
+  align-self: flex-start;
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: var(--secondary);
+  background: var(--secondary-container);
+}
+.routine-paused {
+  color: var(--muted);
+  background: var(--surface-high);
+}
+.routine-presentation,
+.routine-quantity,
+.routine-instruction {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.routine-presentation {
+  color: var(--muted);
+  font-size: 14px;
+}
+.routine-instruction {
+  color: var(--muted);
+  white-space: pre-wrap;
+  font-size: 14px;
+}
+.routine-card .catalog-card-actions form {
+  display: flex;
+  min-width: 0;
+}
+.routine-card .catalog-card-actions button {
+  width: 100%;
+}
+.routine-form textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--soft-border);
+  border-radius: 12px;
+  background: var(--background);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+.routine-form select {
+  max-width: 100%;
+}

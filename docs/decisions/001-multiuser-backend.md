@@ -1,10 +1,12 @@
 # Backend com contas e famílias separadas
 
-Status: arquitetura-alvo com primeira etapa implementada em API local separada:
-cadastro/login, sessões e famílias com PostgreSQL e RLS, com telas HTML no servidor. O escopo entregue está no
-[guia de contas](../ACCOUNTS.md). O site ainda usa SQLite, não exige login e não
-possui isolamento por conta. Os recursos clínicos, sua integração às contas e os demais itens
-abaixo continuam sendo um plano de evolução, não funcionalidades já entregues.
+Status: arquitetura-alvo em implementação na aplicação localhost:3002. Já foram
+entregues contas, sessões, famílias, familiares com fotos e catálogo de medicamentos
+com apresentações, rotinas e horários, PostgreSQL/RLS e telas HTML no servidor. Consulte
+[Contas](../ACCOUNTS.md), [Familiares](../MEMBERS.md) e
+[Medicamentos](../MEDICINES.md) e [Rotinas](../ROUTINES.md) para o escopo efetivo. O site anterior em
+localhost:3001 ainda usa SQLite, sem login. Registro de doses, documentos, convites,
+importação e outros itens abaixo continuam como plano de evolução.
 
 ## Objetivo e limites
 

@@ -5,7 +5,9 @@ import { createAccountsApp } from './accounts-app.js';
 process.umask(0o077);
 try {
   const config = await loadAccountsConfig();
-  const { app, pool } = await createAccountsApp(config.database);
+  const { app, pool } = await createAccountsApp(config.database, {
+    clinicalKey: config.clinicalKey,
+  });
   const server = createServer(app);
   server.listen(config.port, '127.0.0.1', () =>
     console.log(`API de contas: http://127.0.0.1:${config.port}`),

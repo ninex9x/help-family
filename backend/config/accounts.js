@@ -9,6 +9,7 @@ export async function loadAccountsConfig() {
     throw new Error('Porta local inválida.');
   return {
     port,
+    clinicalKey: await readFile(new URL('../../data/postgres/clinical.key', import.meta.url)),
     database: { host: '127.0.0.1', port: 55432, database: 'help_family_accounts', ...settings.app },
   };
 }

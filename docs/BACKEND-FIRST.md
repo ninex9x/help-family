@@ -92,7 +92,8 @@ validação de estado e planejamento de compatibilidade dos arquivos antigos.
 
 ## Contas sem JavaScript
 
-Em **localhost:3002**, cadastro, login, seleção/criação/edição de famílias e logout
+Em **localhost:3002**, cadastro, login, seleção/criação/edição de famílias,
+cadastro/edição de familiares com foto, medicamentos/apresentações, rotinas/horários e logout
 usam HTML completo e formulários HTTP convencionais. As rotas chamam os mesmos
 serviços e validadores da API JSON. Não existe validação ou permissão implementada
 em um script de login.
@@ -102,6 +103,9 @@ oculto validado no servidor. A presença desses campos não é confiável por si
 o backend compara o token e a versão, identifica o usuário pela sessão e verifica
 o vínculo no PostgreSQL. O cookie usa `Path=/` para autenticar páginas e API;
 o cookie antigo em `/api` é removido na autenticação/logout.
+
+Os [formulários de familiares](MEMBERS.md) usam multipart e versão por perfil.
+A foto é validada e recortada pelo servidor; não há pré-processamento no navegador.
 
 Uma CSP bloqueia scripts nas páginas de contas. `Referrer-Policy: same-origin`
 preserva a origem dos formulários nativos e não envia referências a outros sites.

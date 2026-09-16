@@ -8,10 +8,14 @@ registros em tabelas relacionadas, acessadas pelo driver `better-sqlite3`.
 
 O usuário confirmou o requisito de contas independentes. A arquitetura-alvo e a
 transição estão em [Backend multiusuário](decisions/001-multiuser-backend.md).
-Uma aplicação separada implementa contas, sessões e famílias com PostgreSQL,
+Uma aplicação separada implementa contas, sessões, famílias, familiares e medicamentos com PostgreSQL,
 em localhost:3002. Sua estrutura, instalação, endpoints e limites estão no
 [guia de contas](ACCOUNTS.md). Suas telas de acesso e seleção de família são
-geradas pelo servidor e funcionam sem JavaScript. Nenhum dado clínico foi migrado. As demais seções abaixo descrevem o site atual em
+geradas pelo servidor e funcionam sem JavaScript. O módulo de
+[familiares](MEMBERS.md) já permite novos cadastros cifrados e fotos, com RLS.
+O [catálogo de medicamentos e apresentações](MEDICINES.md) também usa cifras,
+RLS e vínculo composto entre família e medicamento. As [rotinas diárias](ROUTINES.md) vinculam esses cadastros com horários cifrados e
+versão própria. Nenhum dado do acervo anterior foi importado. As demais seções abaixo descrevem o site atual em
 localhost:3001: SQLite local, sem autenticação e sem isolamento por família.
 
 ## Organização e responsabilidades

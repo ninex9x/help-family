@@ -10,11 +10,20 @@ import { authRoutes } from './modules/auth/routes.js';
 import { createFamilyAccountsService } from './modules/families/service.js';
 import { familyRoutes } from './modules/families/routes.js';
 import { accountWebRoutes } from './web/accounts/routes.js';
-export async function createAccountsApp(database, { attempts } = {}) {
+import { createMembersService } from './modules/members/service.js';
+import { memberRoutes } from './modules/members/routes.js';
+import { createMedicinesService } from './modules/medicines/service.js';
+import { medicineRoutes } from './modules/medicines/routes.js';
+import { createRoutinesService } from './modules/routines/service.js';
+import { routineRoutes } from './modules/routines/routes.js';
+export async function createAccountsApp(database, { attempts, clinicalKey } = {}) {
   const pool = await openPool(database);
   try {
     const auth = createAuthService(pool, await createPasswords());
     const families = createFamilyAccountsService(pool);
+    const members = createMembersService(pool, clinicalKey);
+    const medicines = createMedicinesService(pool, clinicalKey);
+    const routines = createRoutinesService(pool, clinicalKey);
     const app = express();
     app.disable('x-powered-by');
     app.use(
@@ -29,7 +38,10 @@ export async function createAccountsApp(database, { attempts } = {}) {
     const attemptLimiter = createAttemptLimiter(attempts);
     app.use('/api/auth', authRoutes(auth, attemptLimiter));
     app.use('/api/families', familyRoutes(families, auth));
-    app.use(accountWebRoutes(auth, families, attemptLimiter));
+    app.use('/api/families/:familyId/members', memberRoutes(members, auth));
+    app.use('/api/families/:familyId/medicines', medicineRoutes(medicines, auth));
+    app.use('/api/families/:familyId/routines', routineRoutes(routines, auth));
+    app.use(accountWebRoutes(auth, families, attemptLimiter, members, medicines, routines));
     app.use((_req, _res, next) => next(new HttpError(404, 'Endpoint não encontrado.')));
     app.use(errorResponse);
     return { app, pool };
